@@ -32,9 +32,7 @@ if int(design_life) < 20:
     raise TypeError("Looks like your "+building_type+"'s design life is pretty short!  If this is the case, you may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
         
 ## Get location
-# TODOS
-# -replace with town/city name query, which can be converted to latitude/longitude
-# -provide either name, or latitude/longitude in some standard format.  Wizard can parse appropriately.
+
 if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually \n >"):
     geolocator = Nominatim(user_agent="example")
     loc_address=str(input("Location of building site (full or partial address)? \n >"))
@@ -49,9 +47,17 @@ else:
 
 elev=float(input("How far above sea level is your building (in meters)?"))
 
-lake_river_proximity=yes_or_no("Is your building even remotely close any rivers or lakes?")
 
-# Prepopulate a dictionary-based list of hazards, and for each, a sub-dictionary of resources.
+#NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
+print("NEXT I NEED SOME MORE INFORMATION ABOUT WHAT WEATHER HAZARDS ARE OF MOST CONCERN TO YOU\n")
+print("I'LL ASK SOME BASIC QUESTIONS ABOUT YOUR REGION'S HISTORICAL CLIMATE, AND YOU SIMPLY INDICATE YES OR NO!\n")
+
+
+# Initialize a list of weather hazards that the user will grow interactively.
+hazard_dict={}
+
+'''
+# populate a dictionary-based list of hazards, and for each, a sub-dictionary of resources.
 hazard_dict={"river/lake flooding":  {"resource":"National Research Council", "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8"},
              "sea level rise":       {"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/sea-level/"},
              "extreme rain":         {"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/rx1day/"},
@@ -60,7 +66,49 @@ hazard_dict={"river/lake flooding":  {"resource":"National Research Council", "U
              "permafrost loss":      {"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost"},
              "high winds":           {"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures"},
              "wildfire":             {"resource":"climatedata.ca",            "URL":"https://climate-scenarios.canada.ca/FWI"},
+             "smoke":                {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
+             "tropical storms":      {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
+             "erosion":              {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
              "other":                {"resource":"Service Desk",              "URL":"https://climate-change.canada.ca/support-desk"}}
+'''
+
+
+#NEW dynamically generate hazard_dict based on user inputs.
+if yes_or_no("Is your building in a region prone to severe thunderstorms?"):
+    if yes_or_no("Do these storms carry the risk of flooding rains?"):
+        hazard_dict["extreme rain"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/rx1day/"}
+    if yes_or_no("Do these storms carry the risk of damaging winds?"):
+        hazard_dict["high winds"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures"}
+if yes_or_no("Is your building in a region that experiences heat waves?"):
+    hazard_dict["extreme heat"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/tx_max/"}
+if yes_or_no("Is your building in a region that exerpeinces heavy snowfalls?"):
+    hazard_dict["extreme snow"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads"}
+if yes_or_no("Is your building adjacent to the ocean?"):
+    if yes_or_no("Are you concerned about sea level rise at this location?"):
+        if elev > 50.:
+            if yes_or_no("Are you sure? Based on your elevation, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?") is False:
+                hazard_dict["sea level rise"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/sea-level/"}
+    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?"):
+        hazard_dict["tropical storms"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
+    if yes_or_no("Are you concerned about shoreline erosion at this location?"):
+        hazard_dict["erosion"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
+if yes_or_no("Is your building within, or surrounded by, forested area?"):
+    if yes_or_no("Are you concerned about wildfire at this location?"):
+        hazard_dict["wildfire"]={"resource":"climatedata.ca",            "URL":"https://climate-scenarios.canada.ca/FWI"}
+    if yes_or_no("What about smoke from nearby wildfires?"):
+        hazard_dict["smoke"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
+if latitude < 60.:
+    if yes_or_no("Based on your latitude, it sounds like you may not have to worry about permafrost loss.  Is it OK to skip an assessment of permafrost loss on your building?") is False:
+        hazard_dict["permafrost loss"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost"}
+if yes_or_no("Is your building within a floodplain? Or adjacent to a lake?"):
+        hazard_dict["river/lake flooding"]={"resource":"National Research Council", "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8"}
+    
+      
+
+print(hazard_dict)
+    
+'''
+
 
 # Do an initial screen to weed out obviously non-applicable hazards.  This reduces user work later.
 if latitude < 60.:
@@ -74,6 +122,8 @@ if elev > 50.:
 if lake_river_proximity is False:
     if yes_or_no("Based on your location, it sounds like you may not have to worry about river or lake flooding.  Is it OK to skip an assessment of river/lake flooding on your building?") is True:
         hazard_dict.pop("river/lake flooding")
+
+'''
 
 ### PIEVC Step 2: DATA GATHERING ###
 print("\n")
