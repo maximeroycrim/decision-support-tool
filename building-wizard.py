@@ -3,9 +3,12 @@
 Created on Thu Jan 21 11:17:21 2021
 @author: FykeJ
 """
-# testing ability to edit and sync with master
 
 import itertools
+import geopy
+
+from geopy.geocoders import Nominatim
+
 
 def yes_or_no(question):
     while "Please reply 'y' or 'n'":
@@ -32,9 +35,19 @@ if int(design_life) < 20:
 # TODOS
 # -replace with town/city name query, which can be converted to latitude/longitude
 # -provide either name, or latitude/longitude in some standard format.  Wizard can parse appropriately.
-print("Where is your building at?")
-latitude=float(input("Latitude (in decimals): "))
-longitude=float(input("Longitude (in degrees west, in decimals): "))
+if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually: "):
+    geolocator = Nominatim(user_agent="example")
+    print("Enter a full or partial address so we can look up your building's location: ")
+    loc_address=str(input("Location of building site: "))
+    location = geolocator.geocode(loc_address)
+    latitude = location.latitude
+    longitude = location.longitude  
+    print("Your latitude is..." + str(latitude))
+    print("Your longitude is..." + str(longitude))
+else:
+    latitude=float(input("Enter your Latitude (in decimals): "))
+    longitude=float(input("Enter your Longitude (in degrees west, in decimals): "))
+
 elev=float(input("How far above sea level is your building (in meters)?"))
 
 lake_river_proximity=yes_or_no("Is your building even remotely close any rivers or lakes?")
