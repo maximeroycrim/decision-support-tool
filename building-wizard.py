@@ -108,7 +108,7 @@ if yes_or_no("Is your building within a floodplain? Or adjacent to a lake?"):
 if yes_or_no("Any other weather hazards you want to tell me about before we continue?"):
     hazard_dict[input("->")]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
     
-print(hazard_dict)    
+  
 '''
 
 
