@@ -35,10 +35,9 @@ if int(design_life) < 20:
 # TODOS
 # -replace with town/city name query, which can be converted to latitude/longitude
 # -provide either name, or latitude/longitude in some standard format.  Wizard can parse appropriately.
-if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually: "):
+if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually \n >"):
     geolocator = Nominatim(user_agent="example")
-    print("Enter a full or partial address so we can look up your building's location: ")
-    loc_address=str(input("Location of building site: "))
+    loc_address=str(input("Location of building site (full or partial address)? \n >"))
     location = geolocator.geocode(loc_address)
     latitude = location.latitude
     longitude = location.longitude  
