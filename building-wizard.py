@@ -53,7 +53,7 @@ print("NEXT I NEED SOME MORE INFORMATION ABOUT WHAT WEATHER HAZARDS ARE OF MOST 
 print("I'LL ASK SOME BASIC QUESTIONS ABOUT YOUR REGION'S HISTORICAL CLIMATE, AND YOU SIMPLY INDICATE YES OR NO!\n")
 
 
-# Initialize a list of weather hazards that the user will grow interactively.
+# Initialize a blank list of weather hazards that the user will grow following a series of y/n questions:
 hazard_dict={}
 
 '''
@@ -103,10 +103,12 @@ if latitude < 60.:
 if yes_or_no("Is your building within a floodplain? Or adjacent to a lake?"):
         hazard_dict["river/lake flooding"]={"resource":"National Research Council", "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8"}
     
-      
-
-print(hazard_dict)
+#and allow for 'other' entries
+        
+if yes_or_no("Any other weather hazards you want to tell me about before we continue?"):
+    hazard_dict[input("->")]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
     
+print(hazard_dict)    
 '''
 
 
