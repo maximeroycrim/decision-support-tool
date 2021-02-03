@@ -126,6 +126,8 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
 #risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
 #risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
+# TODO: provide an interim summary of climate trends?
+
 ### PIEVC Step 2: DATA GATHERING ###
 print("\n")
 print("NOW LET'S THINK ABOUT YOUR BUILDING IN MORE DETAIL!\n")
@@ -151,6 +153,8 @@ print("NOW LET'S THINK AGAIN ABOUT CLIMATE WEATHER HAZARDS!\n")
 for component in building_component_dict:
     print("Which of the following climate and weather impacts to the ***"+component+"*** of your building keep you up at night now, or might in the future?\n")
     for h in hazard_dict:
+        # TODO: add in the statement about expected future trends.
+        # TODO: link in actual projection #s or map, if those are available.
         if yes_or_no(h) is True:
             building_component_dict[component].append(h) #append each relevant hazard to the list of hazards for each component
     if 'other' in building_component_dict[component]: #extend list with any custom hazards provided by user.
