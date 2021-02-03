@@ -1,22 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jan 21 11:17:21 2021
-@author: FykeJ
+A decision support tool for integrating climate change into building design, maintenance, and renovation.
 """
 
-import itertools
-import geopy
+import json
 
 from geopy.geocoders import Nominatim
 
+from collections import Counter
 
+# Load the master list of climate hazards, from which a subset of user-specific building hazards is built,
+with open('master_hazard_database.json', 'r') as j:
+    master_hazard_dict = json.loads(j.read())
+
+# Quick function to error-catch non-standard y/n responses
 def yes_or_no(question):
     while "Please reply 'y' or 'n'":
         reply = str(input(question+' (y/n): ')).lower().strip()
-        if reply[0] == 'y':
-            return True
-        if reply[0] == 'n':
-            return False
+        if reply != "":
+            if reply[0] == 'y':
+                return True
+            if reply[0] == 'n':
+                return False
 
 print("I AM A WIZARD THAT WILL GUIDE YOU IN STARTING YOUR BUILDING RISK ASSESSMENT AND ADAPTATION PLANNING PROCESS!\n")
 print("IF YOU ARE LUCKY I MAY EVEN FIND SOME GOOD CLIMATE DATA FOR YOU!\n")
@@ -42,154 +47,150 @@ if yes_or_no("Type YES if you would like me to look up your location from your a
     print("Your latitude is..." + str(latitude))
     print("Your longitude is..." + str(longitude))
 else:
-    latitude=float(input("Enter your Latitude (in decimals): "))
-    longitude=float(input("Enter your Longitude (in degrees west, in decimals): "))
+    latitude=float(input("Enter your Latitude (in decimals): \n >"))
+    longitude=float(input("Enter your Longitude (in degrees west, in decimals): \n >"))
 
-elev=float(input("How far above sea level is your building (in meters)?"))
-
+elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
 #NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
 print("NEXT I NEED SOME MORE INFORMATION ABOUT WHAT WEATHER HAZARDS ARE OF MOST CONCERN TO YOU\n")
 print("I'LL ASK SOME BASIC QUESTIONS ABOUT YOUR REGION'S HISTORICAL CLIMATE, AND YOU SIMPLY INDICATE YES OR NO!\n")
 
+# %%
 
 # Initialize a blank list of weather hazards that the user will grow following a series of y/n questions:
 hazard_dict={}
 
-'''
-# populate a dictionary-based list of hazards, and for each, a sub-dictionary of resources.
-hazard_dict={"river/lake flooding":  {"resource":"National Research Council", "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8"},
-             "sea level rise":       {"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/sea-level/"},
-             "extreme rain":         {"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/rx1day/"},
-             "extreme heat":         {"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/tx_max/"},
-             "extreme snow":         {"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads"},
-             "permafrost loss":      {"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost"},
-             "high winds":           {"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures"},
-             "wildfire":             {"resource":"climatedata.ca",            "URL":"https://climate-scenarios.canada.ca/FWI"},
-             "smoke":                {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
-             "tropical storms":      {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
-             "erosion":              {"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"},
-             "other":                {"resource":"Service Desk",              "URL":"https://climate-change.canada.ca/support-desk"}}
-'''
-
-
-#NEW dynamically generate hazard_dict based on user inputs.
-if yes_or_no("Is your building in a region prone to severe thunderstorms?"):
-    if yes_or_no("Do these storms carry the risk of flooding rains?"):
-        hazard_dict["extreme rain"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/rx1day/"}
-    if yes_or_no("Do these storms carry the risk of damaging winds?"):
-        hazard_dict["high winds"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures"}
-if yes_or_no("Is your building in a region that experiences heat waves?"):
-    hazard_dict["extreme heat"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/tx_max/"}
-if yes_or_no("Is your building in a region that exerpeinces heavy snowfalls?"):
-    hazard_dict["extreme snow"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads"}
-if yes_or_no("Is your building adjacent to the ocean?"):
-    if yes_or_no("Are you concerned about sea level rise at this location?"):
+#Dynamically generate a customized thazard_dict based on user prompts.
+if yes_or_no("Is your building in a region prone to severe storms that bring heavy rains?\n"):
+    if yes_or_no("Do these storms ever bring flooding rains (so-called 'pluvial' or 'overland' flooding)?\n"):
+        key="extreme rain"
+        hazard_dict[key]=master_hazard_dict[key]
+    if yes_or_no("Do these storms ever bring damaging winds?\n"):
+        key="high winds"
+        hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building in a region that experiences damaging or dangerous heat waves?\n"):
+    key="extreme heat"
+    hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building in a region that experiences heavy, damaging, snowfalls?\n"):
+    key="extreme snow"
+    hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building near the ocean?\n"): #Jer: not sure we need this hierarchy of questions for SLR.  Kind of redundant..?
+    if yes_or_no("Are you concerned about sea level rise at this location?\n"):
         if elev > 50.:
-            if yes_or_no("Are you sure? Based on your elevation, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?") is False:
-                hazard_dict["sea level rise"]={"resource":"climatedata.ca",            "URL":"https://climatedata.ca/variable/sea-level/"}
-    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?"):
-        hazard_dict["tropical storms"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
-    if yes_or_no("Are you concerned about shoreline erosion at this location?"):
-        hazard_dict["erosion"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
-if yes_or_no("Is your building within, or surrounded by, forested area?"):
-    if yes_or_no("Are you concerned about wildfire at this location?"):
-        hazard_dict["wildfire"]={"resource":"climatedata.ca",            "URL":"https://climate-scenarios.canada.ca/FWI"}
-    if yes_or_no("What about smoke from nearby wildfires?"):
-        hazard_dict["smoke"]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
-if latitude < 60.:
-    if yes_or_no("Based on your latitude, it sounds like you may not have to worry about permafrost loss.  Is it OK to skip an assessment of permafrost loss on your building?") is False:
-        hazard_dict["permafrost loss"]={"resource":"CRBCPI report",             "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost"}
-if yes_or_no("Is your building within a floodplain? Or adjacent to a lake?"):
-        hazard_dict["river/lake flooding"]={"resource":"National Research Council", "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8"}
-    
-#and allow for 'other' entries
-        
-if yes_or_no("Any other weather hazards you want to tell me about before we continue?"):
-    hazard_dict[input("->")]={"resource":"Service Desk",              "URL": "https://climate-change.canada.ca/support-desk"}
-    
-  
-'''
+            if yes_or_no("Based on your elevation, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?\n") is False:
+                key="sea level rise"
+                hazard_dict[key]=master_hazard_dict[key]
+    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?\n"): #The actual hazards from these storms is wind, rain, and coastal flooding.  Since we cover these already, not sure we need to include a specific storm category here...?
+        key="tropical storms"
+        hazard_dict[key]=master_hazard_dict[key]
+    if yes_or_no("Are you concerned about marine coastal erosion at this location?\n"): #Shoreline erosion is an impact that is caused by wind/wave hazard.  So, not sure we need to add it to list of hazards.  Also, should be clear on erosion in marine, and also river/lake perspectives
+        key="erosion"
+        hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building within, out the direct impacts of wildfire at this location?\n"):
+        key="wildfire"
+        hazard_dict[key]=master_hazard_dict[key]
+        if yes_or_no("What about smoke impacts to air quality from nearby wildfires?\n"):
+            key="smoke"
+            hazard_dict[key]=master_hazard_dict[key]
+if latitude > 60.: #This threshold was quickly set - should re-evaluate based on CRBCPI or other, Canadian permafrost map.
+    if yes_or_no("Does any permafrost occur in your region?\n"):
+        key="permafrost loss"
+        hazard_dict[key]=master_hazard_dict[key]
+else:
+   if yes_or_no("Based on your latitude, it sounds like you may not have to worry about permafrost loss.  Does this sound right?\n") is False:
+        print("OK, let's keep permafrost in the mix.")
+        key="permafrost loss"
+        hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building near to within a known floodplain? Or next/near to a lake?\n"):
+        key="river/lake flooding"
+        hazard_dict[key]=master_hazard_dict[key]
 
+# %%
+# And allow for 'other' entries
 
-# Do an initial screen to weed out obviously non-applicable hazards.  This reduces user work later.
-if latitude < 60.:
-    if yes_or_no("Based on your location, it sounds like you may not have to worry about permafrost loss.  Is it OK to skip an assessment of permafrost loss on your building?") is True:
-        hazard_dict.pop("permafrost loss")
+if yes_or_no("Any other weather hazards you want to tell me about before we continue?\n"):
+    print("Please enter these hazards below (or Ctrl-C when done)")
+    try:
+        while True:
+            hazard_dict.update({input("->"):master_hazard_dict["other"]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
+    except KeyboardInterrupt:
+        pass            
 
-if elev > 50.:
-    if yes_or_no("Based on your location, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?") is True:
-        hazard_dict.pop("sea level rise")
-        
-if lake_river_proximity is False:
-    if yes_or_no("Based on your location, it sounds like you may not have to worry about river or lake flooding.  Is it OK to skip an assessment of river/lake flooding on your building?") is True:
-        hazard_dict.pop("river/lake flooding")
+# %%
 
-'''
+risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
+risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
 ### PIEVC Step 2: DATA GATHERING ###
 print("\n")
 print("NOW LET'S THINK ABOUT YOUR BUILDING IN MORE DETAIL!\n")
 
 # Initialize a list of building components that the user will grow interactively.
+# This list will store component-specific hazards.
 building_component_dict={}
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
 print("What are the key, major components of your building?  Enter as many as you like.  (or Ctrl-C when done)\n")
 try:
     while True:
-        building_component_dict[input("->")]=[] #make a dictionary key for each listed component, and set value to a blank list
+        building_component_dict[input("->")]=[] #make a dictionary key for each listed component, and set value to a blank list.  This list will grow in next loop.
 except KeyboardInterrupt:
     pass
+
+#%%
 
 #Now prompt the user to consider the weather/climate impacts, on a componentwise basis.
 ##Provide some standard hazards, and then prompt user to add more if needed
 print("\n")
-print("NOW LET'S THINK ABOUT CLIMATE WEATHER HAZARDS!\n")
-for key in building_component_dict:
-    print("Which of the following climate and weather impacts to the ***"+key+"*** of your building keep you up at night now, or might in the future?\n")
+print("NOW LET'S THINK AGAIN ABOUT CLIMATE WEATHER HAZARDS!\n")
+for component in building_component_dict:
+    print("Which of the following climate and weather impacts to the ***"+component+"*** of your building keep you up at night now, or might in the future?\n")
     for h in hazard_dict:
         if yes_or_no(h) is True:
-            building_component_dict[key].append(h) #append each relevant hazard to the list of hazards for each component
-    if 'other' in building_component_dict[key]: #extend list with any custom hazards provided by user.
+            building_component_dict[component].append(h) #append each relevant hazard to the list of hazards for each component
+    if 'other' in building_component_dict[component]: #extend list with any custom hazards provided by user.
         print("Looks like you are thinking of other hazards.  What are they?  (Type Ctrl-C when done).")
         try:
             while True:
-               building_component_dict[key].append(input("->"))
+               building_component_dict[component].append(input("->"))
         except KeyboardInterrupt:
             pass        
-        building_component_dict[key].remove('other') #clean up redundant 'other' entry
-        
-#Collect all hazards into a common, non-repeating list
-#TODO: don't do this, rather, present output by component (like Ryan's approach)
-infrastructure_hazards=list(set(itertools.chain(*building_component_dict.values())))
+        building_component_dict[component].remove('other') #clean up redundant 'other' entry
 
-risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
-risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
+#%% 
 
-print("GOOD JOB!  BY CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU ARE ON YOUR WAY TO A FULL CLIMATE CHANGE RISK ASSESSMENT!\n")
-print("LET ME SUMMARIZE YOUR RESULTS, AND POINT YOU TO SOME POTENTIAL SOURCES OF GOOD PAST AND FUTURE CLIMATE INFORMATION THAT IS RELEVANT TO YOUR BUILDING!\n")
-print("REFLECTING YOUR RISK TOLERANCE, YOU MAY WANT TO CONSIDER EXPLORING THE "+risk_dict[risk_tolerance]+" CLIMATE SCENARIO WITHIN THE FUTURE CLIMATE INFORMATION!\n")
+print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO A FULL CLIMATE CHANGE RISK ASSESSMENT!\n")
+print("LET ME SUMMARIZE YOUR RESULTS, AND TRY TO POINT YOU TO SOME POTENTIAL SOURCES OF GOOD PAST AND FUTURE CLIMATE INFORMATION THAT IS RELEVANT TO YOUR BUILDING!\n")
 
-#TODO: remake this to present things by component, instead of by climate hazard.
-#TODO: use lat/lon to, where possible, grab climatedata or other data, and provide a qualitative trend direction statement.
-
-for h in infrastructure_hazards:
+sep="\n->"
+# Summarize hazards by component
+for component in building_component_dict:
+    print("Let's consider the "+component+" of your building.")
+    print("It sounds like your building's "+component+" could be vulnerable to climate change-caused shifts to:\n"+sep+sep.join(building_component_dict[component]))
     print(" ")
-    print("************")
-    print("Regarding "+h+": ")    
-    if h in hazard_dict:
-        print("You might find some good information at "+hazard_dict[h]["resource"]+"...")
-        print("Start your exploration here: "+hazard_dict[h]["URL"])
-    else:
-        print("Hmmm, this variable potentially doesn't have good climate change information yet.")
-        print("Why don't you try contacting the Climate Services Support Desk?")
-        print(hazard_dict["other"]["URL"]) 
-    input("Press any key to continue...")
 
-print("YOU SHOULD EXPLORE THIS INFORMATION")
-input("Press any key and I will vanish in a puff of smoke!")
+# Find component(s) with most/least vulnerabilities.  Code deals with ties.
+mx = max(len(x) for x in iter(building_component_dict.values()))
+mn = min(len(x) for x in iter(building_component_dict.values()))
+most_vulnerable_components=[k for k, v in iter(building_component_dict.items()) if len(v)==mx]
+least_vulnerable_components=[k for k, v in iter(building_component_dict.items()) if len(v)==mn]
 
-    
+
+print("Based on these lists, it looks like your most vulnerable building components may be:\n"+sep+sep.join(most_vulnerable_components))
+print("\nIt might make sense to focus most on this component during your climate change risk assessment.")
+print("Conversely, your least vulnerable building components look to me to be:\n"+sep+sep.join(least_vulnerable_components)+"\n")
+
+# Rank hazards by # of times they are mentioned as component hazards.  Display top hazards.
+hazard_list=sum(building_component_dict.values(), [])
+l_sorted=Counter(hazard_list).most_common()
+max_len=min(3,len(l_sorted))
+print("Based on these lists, the top climate hazards for your building appear to be:\n")
+for h in range(max_len):
+    print("->"+l_sorted[h][0])
+print("\nIt might make sense to focus most on these hazards during your climate change risk assessment climate data gathering.")
+
+print("Your next steps:")
+
 
     

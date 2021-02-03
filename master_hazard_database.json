@@ -1,0 +1,100 @@
+{
+   "river/lake flooding":{
+      "resource": "National Research Council",
+      "URL": "https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
+      "direction_statement": "Climate change will cause changes to river and lake flooding severity and frequency that will depend on the location, season, and local watershed factors.",
+      "direction_confidence": "It is difficult to make confident statements regarding the direction of climate-driven changes to river and lake flooding severity, without added local information about flood mechanisms and local watershed conditions.",
+      "magnitude_confidence":"Estimating the magnitude of changes to river and lake flooding due to climate change is difficult without undertaking detailed local assessments.",
+      "parting_thought":"If you are unable to undertake a more detailed climate change/flood assessment for your building, conservative approach that assumes that flooding will increase in severity and frequency may be safest option."
+   },
+   "sea level rise":{
+      "resource": "climatedata.ca",
+      "URL": "https://climatedata.ca/variable/sea-level/",
+      "direction_statement": "Relative sea level is expected to rise along many Canadian coastlines.  However, particularly in the North, sea level may actually fall because of ongoing natural land uplift.",
+      "direction_confidence": "There is reasonably high confidence in the direction of projected sea level changes around Canada's coastlines.",
+      "magnitude_confidence":"There is less confidence in the exact magnitude of changes to sea level at specific locations.",
+      "parting_thought":"Remember, sea level rise will most likely impact your building through it's role in increasing the severity and frequency of storm and tide-driven extreme coastal flooding events."
+   },
+   "extreme rain":{
+      "resource":"climatedata.ca",
+      "URL":"https://climatedata.ca/variable/rx1day/",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },      
+   "extreme heat":{
+      "resource":"climatedata.ca",
+      "URL":"https://climatedata.ca/variable/tx_max/",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },
+   "extreme snow":{
+      "resource":"CRBCPI report",
+      "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },      
+   "permafrost loss":{
+      "resource":"CRBCPI report",
+      "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },       
+   "high winds":{
+      "resource":"CRBCPI report",
+      "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },      
+   "wildfire":{
+      "resource":"climatedata.ca",
+      "URL":"https://climate-scenarios.canada.ca/FWI",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },         
+   "smoke":{
+      "resource":"Service Desk",
+      "URL": "https://climate-change.canada.ca/support-desk",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },        
+   "tropical storms":{
+      "resource":"Service Desk",
+      "URL": "https://climate-change.canada.ca/support-desk",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },          
+   "erosion":{
+      "resource":"Service Desk",
+      "URL": "https://climate-change.canada.ca/support-desk",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""
+   },      
+   "other":{
+      "resource":"Service Desk",
+      "URL":"https://climate-change.canada.ca/support-desk",
+      "direction_statement": "",
+      "direction_confidence": "",
+      "magnitude_confidence":"",
+      "parting_thought":""   
+   }
+}
+
+
