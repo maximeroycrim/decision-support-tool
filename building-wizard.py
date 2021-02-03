@@ -90,12 +90,12 @@ if yes_or_no("Is your building near the ocean?\n"): #Jer: not sure we need this 
     if yes_or_no("Are you concerned about marine coastal erosion at this location?\n"): #Shoreline erosion is an impact that is caused by wind/wave hazard.  So, not sure we need to add it to list of hazards.  Also, should be clear on erosion in marine, and also river/lake perspectives
         key="erosion"
         hazard_dict[key]=master_hazard_dict[key]
-if yes_or_no("Is your building within, out the direct impacts of wildfire at this location?\n"):
+if yes_or_no("Is your building within a forested environment and is exposed to wildfire risk at this location?\n"):
         key="wildfire"
         hazard_dict[key]=master_hazard_dict[key]
-        if yes_or_no("What about smoke impacts to air quality from nearby wildfires?\n"):
-            key="smoke"
-            hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("What about smoke impacts to air quality from nearby wildfires?\n"):
+    key="smoke"
+    hazard_dict[key]=master_hazard_dict[key]
 if latitude > 60.: #This threshold was quickly set - should re-evaluate based on CRBCPI or other, Canadian permafrost map.
     if yes_or_no("Does any permafrost occur in your region?\n"):
         key="permafrost loss"
@@ -105,7 +105,7 @@ else:
         print("OK, let's keep permafrost in the mix.")
         key="permafrost loss"
         hazard_dict[key]=master_hazard_dict[key]
-if yes_or_no("Is your building near to within a known floodplain? Or next/near to a lake?\n"):
+if yes_or_no("Is your building near or within a floodplain? Or next/near to a lake?\n"):
         key="river/lake flooding"
         hazard_dict[key]=master_hazard_dict[key]
 
@@ -121,8 +121,26 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
         pass            
 
 # %%
+# GAUGE USER'S RISK TOLERANCE
+print ("\n")
+print ("BEFORE WE CONTINUE, IT'S IMPORTANT THAT WE HAVE 'THE TALK'. YOU KNOW WHAT I MEAN. LET'S TALK ABOUT THE BIG ELEPHANT IN THE ROOM: UNCERTAINTY.")
+print ("UNLIKE HISTORICAL CLIMATE NORMALS, FUTURE CLIMATE CONDITIONS CAN'T BE BOILED DOWN TO A SINGLE NUMBER.")
+print ("IN FACT, THE FUTURE IS FAR FROM CERTAIN. THE AMOUNT OF FUTURE CLIMATE CHANGE ONE NEEDS TO PLAN FOR DEPENDS LARGELY ON FUTURE GREENHOUSE EMISSIONS.")
+print ("YOU COULD ALWAYS 'PLAN FOR THE WORST AND HOPE FOR THE BEST,' BUT IT ISN'T ALWAYS FINANCIALLY POSSIBLE TO PLAN FOR ALL POSSIBLE FUTURE HAZARDS.")
+print ("I WANT TO GUAGE YOUR TOLERANCE FOR FUTURE CLIMATE UNCERTAINY BY ASKING A FEW SIMPLE QUESTIONS : ")
 
-risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
+print ("How would you rate your risk tolerance? This is the maximum amount of uncertainty you are willing to take on and still be able to sleep at night")
+financial_tolerance=input("answer: l=low tolerance; m=medium tolerance; h=high tolerance \n >")
+
+print ("How would you rate your risk capcity? This is the amount of risk you must take on in order to achieve your goals.")
+financial_capacity=input("answer: l=low capacity; m=medium capacity; h=high capacity \n >")
+
+print ("How would your rate your building's adaptive capacity? In other words, this is how much additional capacity the current design has to withstand an increase in climate risks.")
+adaptive_capacity=input("answer: l=low capacity; m=medium capacity; h=high capacity \n >")
+
+print ("Finally, what is your health and safety risk tolerance? This is the likihood that exposure to a hazard could result in harm or other adverse health impacts.")
+health_tolerance=input("answer: l=low tolerance; m=medium tolerance; h=high tolerance \n >")
+
 risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
 ### PIEVC Step 2: DATA GATHERING ###
