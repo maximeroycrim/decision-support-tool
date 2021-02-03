@@ -64,12 +64,13 @@ hazard_dict={}
 #Dynamically generate a customized thazard_dict based on user prompts.
 if yes_or_no("Is your building in a region prone to severe storms that bring heavy rains?\n"):
     if yes_or_no("Do these storms ever bring flooding rains (so-called 'pluvial' or 'overland' flooding)?\n"):
-        key="extreme rain"
-        hazard_dict[key]=master_hazard_dict[key]
-    if yes_or_no("Do these storms ever bring damaging winds?\n"):
-        key="high winds"
-        hazard_dict[key]=master_hazard_dict[key]
-if yes_or_no("Is your building in a region that experiences damaging or dangerous heat waves?\n"):
+    #if yes_or_no("Do these storms ever bring flooding rains (so-called 'pluvial' or 'overland' flooding)?\n"):
+    #    key="extreme rain"
+    #    hazard_dict[key]=master_hazard_dict[key]  #TODO: add infiltration,..
+if yes_or_no("Does your region experience heavy winds?\n"):
+    key="high winds"
+    hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your building in a region that experiences prolonged and dangerous heat waves?\n"):
     key="extreme heat"
     hazard_dict[key]=master_hazard_dict[key]
 if yes_or_no("Is your building in a region that experiences heavy, damaging, snowfalls?\n"):
@@ -84,18 +85,15 @@ if yes_or_no("Is your building near the ocean?\n"): #Jer: not sure we need this 
         else:
             key="sea level rise"
             hazard_dict[key]=master_hazard_dict[key]            
-    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?\n"): #The actual hazards from these storms is wind, rain, and coastal flooding.  Since we cover these already, not sure we need to include a specific storm category here...?
-        key="tropical storms"
-        hazard_dict[key]=master_hazard_dict[key]
-    if yes_or_no("Are you concerned about marine coastal erosion at this location?\n"): #Shoreline erosion is an impact that is caused by wind/wave hazard.  So, not sure we need to add it to list of hazards.  Also, should be clear on erosion in marine, and also river/lake perspectives
-        key="erosion"
-        hazard_dict[key]=master_hazard_dict[key]
-if yes_or_no("Is your building within, out the direct impacts of wildfire at this location?\n"):
+#    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?\n"): #The actual hazards from these storms is wind, rain, and coastal flooding.  Since we cover these already, not sure we need to include a specific storm category here...?
+#        key="tropical storms"
+#        hazard_dict[key]=master_hazard_dict[key]
+#    if yes_or_no("Are you concerned about marine coastal erosion at this location?\n"): #Shoreline erosion is an impact that is caused by wind/wave hazard.  So, not sure we need to add it to list of hazards.  Also, should be clear on erosion in marine, and also river/lake perspectives
+#        key="erosion"
+#        hazard_dict[key]=master_hazard_dict[key]
+if yes_or_no("Is your region prone to wildfires or smoke from nearby wildfires?\n"):
         key="wildfire"
         hazard_dict[key]=master_hazard_dict[key]
-        if yes_or_no("What about smoke impacts to air quality from nearby wildfires?\n"):
-            key="smoke"
-            hazard_dict[key]=master_hazard_dict[key]
 if latitude > 60.: #This threshold was quickly set - should re-evaluate based on CRBCPI or other, Canadian permafrost map.
     if yes_or_no("Does any permafrost occur in your region?\n"):
         key="permafrost loss"
@@ -105,7 +103,7 @@ else:
         print("OK, let's keep permafrost in the mix.")
         key="permafrost loss"
         hazard_dict[key]=master_hazard_dict[key]
-if yes_or_no("Is your building near to within a known floodplain? Or next/near to a lake?\n"):
+if yes_or_no("Is your regions lowlying, and susceptible to river or lake flooding?\n"):
         key="river/lake flooding"
         hazard_dict[key]=master_hazard_dict[key]
 
@@ -113,17 +111,20 @@ if yes_or_no("Is your building near to within a known floodplain? Or next/near t
 # And allow for 'other' entries
 
 if yes_or_no("Any other weather hazards you want to tell me about before we continue?\n"):
-    print("Please enter these hazards below (or Ctrl-C when done)")
+    print("Please enter these hazards below (or Ctrl-C when done)")  #replace Ctrl-C with a 'done'
     try:
         while True:
+            val=input("->")
+            if val=='done': # see above
+                break
             hazard_dict.update({input("->"):master_hazard_dict["other"]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
     except KeyboardInterrupt:
         pass            
 
 # %%
 
-risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
-risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
+#risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
+#risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
 ### PIEVC Step 2: DATA GATHERING ###
 print("\n")
@@ -134,7 +135,7 @@ print("NOW LET'S THINK ABOUT YOUR BUILDING IN MORE DETAIL!\n")
 building_component_dict={}
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
-print("What are the key, major components of your building?  Enter as many as you like.  (or Ctrl-C when done)\n")
+print("What are the key, major components of your building?  Enter as many as you like.  (or Ctrl-C when done)\n") #TODO: make pre-populated components and systems list
 try:
     while True:
         building_component_dict[input("->")]=[] #make a dictionary key for each listed component, and set value to a blank list.  This list will grow in next loop.
@@ -160,7 +161,7 @@ for component in building_component_dict:
         except KeyboardInterrupt:
             pass        
         building_component_dict[component].remove('other') #clean up redundant 'other' entry
-
+#TODO: make logic to reorder list by priority
 #%% 
 
 print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO A FULL CLIMATE CHANGE RISK ASSESSMENT!\n")
