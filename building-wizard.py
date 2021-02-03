@@ -81,6 +81,9 @@ if yes_or_no("Is your building near the ocean?\n"): #Jer: not sure we need this 
             if yes_or_no("Based on your elevation, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?\n") is False:
                 key="sea level rise"
                 hazard_dict[key]=master_hazard_dict[key]
+        else:
+            key="sea level rise"
+            hazard_dict[key]=master_hazard_dict[key]            
     if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?\n"): #The actual hazards from these storms is wind, rain, and coastal flooding.  Since we cover these already, not sure we need to include a specific storm category here...?
         key="tropical storms"
         hazard_dict[key]=master_hazard_dict[key]
