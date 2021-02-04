@@ -32,7 +32,7 @@ print(clear)
 print("HAZZUH!")
 print("\n")
 
-draw_stuff('wizard')
+draw_stuff('wizard_start')
 
 print("\n")
 print("I AM A WIZARD THAT WILL GUIDE YOU IN STARTING YOUR BUILDING RISK ASSESSMENT AND ADAPTATION PLANNING PROCESS!\n")
@@ -294,6 +294,14 @@ for component in building_component_dict:
     building_component_dict[component]=haz
     
 #TODO: make logic to reorder list by priority
+#loop thorugh each haz, from 1-10 how much does it concern you?
+print(clear)
+print("\n")
+print("THIS PART OF THE PROGRAM IS UNDER CONSTRUCTION...")
+print("\n")
+print("We want to user to reflect on the magnitiude or the severity of these hazards, so that we can later rank which hazards and which components are seemingly most at risk from climate change. Will be most qualitative, and will not be as detailed as a proper risk computation from liklihood and magnitude.")
+print("\n")
+input("Press ENTER to continue...")    
 #%% 
 
 print(clear)
@@ -338,12 +346,19 @@ print("\nIt might make sense to focus most on these hazards during your climate 
 print ("Press ENTER to continue")
 print (clear)
 
-print("JUST ONE MORE PARTING BIT OF WISDOME BEFORE YOU CONTINUE YOUR QUEST...")
+print("SOME PARTING WISDOME BEFORE I LEAVE YOU TO CONTINUE ON YOUR QUEST...")
 print("Here are some resources for you to explore, to find information on how the hazards that may matter for your building may change with climate change!")
 for h,r in l_sorted:
     print("\nFor "+h+", you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
 
-draw_stuff('wizard')
+#TODO: your next steps are: get the data, do a proper engineering risk assessment, etc., assess your personal risks, adaption steps, etc.
+print("\n")
+print("You now have some links to climate data that speaks to hazards you think may impact your building!")
+print("You can now use this data to better understand how the likelihood and magnitude of these hazards will change.")
+print("You, in close collaboration with your building’s operators and stakeholders can develop a feeling for how consequential these changes will be using a risk assessment that compares present-day climate risks to future risks.")
+print("Then, if you see climate change increasing your building’s risks beyond a reasonable amount: you can develop adaptation actions that will ensure your building’s resilience!")
+print("\n")
+draw_stuff('wizard_end')
 print ("POOF! ALL DONE")
 
 

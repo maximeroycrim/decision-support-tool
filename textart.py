@@ -17,7 +17,7 @@ def draw_stuff(thing):
         print("        / / / / / / / / / /       ")
         return
     
-    if thing == 'wizard':
+    if thing == 'wizard_start':
         print("                             /\ ")
         print("                            /  \ ")
         print("                           |    |")
@@ -25,8 +25,29 @@ def draw_stuff(thing):
         print("                           :'_' :")
         print("                           _:"":\___")
         print("            ' '      ____.' :::     '._")
-        print("           . *=====<<=)           \    :")
-        print("            .  '      '-'-'\_      /'._.'")
+        print("           . *=====<<=)   building    :")
+        print("            .  '      '-'-'\_wizard/'._.'")
+        print("                             \====:_ """)
+        print("                            .'     \\")
+        print("                           :       :")
+        print("                          /   :    \ ")
+        print("                         :   .      '.")
+        print("                         :  : :      :")
+        print("                         :__:-:__.;--'")
+        print("                         '-'   '-'")
+
+        return
+    
+    if thing == 'wizard_end':
+        print("                             /\ ")
+        print("                            /  \ ")
+        print("                           |    |")
+        print("                         --:'''':--")
+        print("                           :'_' :")
+        print("                           _:"":\___")
+        print("            ' '      ____.' :::     '._")
+        print("           . *=====<<=)   building    :")
+        print("            .  '      '-'-'\_wizard/'._.'")
         print("                             \====:_ """)
         print("                            .'     \\")
         print("                           :       :")
@@ -34,11 +55,11 @@ def draw_stuff(thing):
         print("                         :   .      '.")
         print("         ,. _            :  : :      :")
         print("      '-'    ).          :__:-:__.;--'")
-        print("    (        '  )        '-'   '-'")
-        print(" ( -   .  .   - _")
-        print("(    .'  _ )     )")
+        print("    ( climate'  )        '-'   '-'")
+        print(" ( -  risk be - _")
+        print("(    .' gone!    )")
         print("'-  ()_.\,\,   -")
-        return
+        return    
     
     if thing == 'house':
         print("         []_____   ")
