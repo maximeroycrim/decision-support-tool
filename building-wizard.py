@@ -6,7 +6,7 @@ A decision support tool for integrating climate change into building design, mai
 import json
 from geopy.geocoders import Nominatim
 from collections import Counter
-
+import webbrowser
 from textart import draw_stuff
 
 #SETUP FUCNTIONS
@@ -350,6 +350,9 @@ print("SOME PARTING WISDOME BEFORE I LEAVE YOU TO CONTINUE ON YOUR QUEST...")
 print("Here are some resources for you to explore, to find information on how the hazards that may matter for your building may change with climate change!")
 for h,r in l_sorted:
     print("\nFor "+h+", you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
+    if hazard_dict[h]["resource"]=="climatedata.ca":
+        url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(hazard_dict[h]["decade"])+"s&sector="
+        webbrowser.open(url,new=2,autoraise=False)
 
 #TODO: your next steps are: get the data, do a proper engineering risk assessment, etc., assess your personal risks, adaption steps, etc.
 print("\n")

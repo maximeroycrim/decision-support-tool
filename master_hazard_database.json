@@ -20,6 +20,9 @@
    "extreme rain":{
       "resource":"climatedata.ca",
       "URL":"https://climatedata.ca/variable/rx1day/",
+      "var":"rx1day",
+      "group":"precipitation",
+      "decade":"2050",
       "direction_statement": "Climate change is expected to cause extreme rain events to become more frequent and severe.",
       "direction_confidence": "",
       "magnitude_confidence":"",
@@ -29,6 +32,9 @@
    "extreme heat":{
       "resource":"climatedata.ca",
       "URL":"https://climatedata.ca/variable/tx_max/",
+      "var":"tx_max",
+      "group":"temperature",
+      "decade":"2050",
       "direction_statement": "Climate change is expected to cause heat waves to become more frequent and severe.",
       "direction_confidence": "",
       "magnitude_confidence":"",
@@ -38,6 +44,9 @@
    "extreme cold":{
       "resource":"climatedata.ca",
       "URL":"https://climatedata.ca/variable/tx_min/",
+      "var":"tn_min",
+      "group":"temperature",
+      "decade":"2050",
       "direction_statement": "Climate change is expected to cause extreme cold snaps to become less frequent and severe.",
       "direction_confidence": "",
       "magnitude_confidence":"",
@@ -72,7 +81,7 @@
       "notes":""
    },      
    "wildfire":{
-      "resource":"climatedata.ca",
+      "resource":"coming soon to climatedata.ca",
       "URL":"https://climate-scenarios.canada.ca/FWI",
       "direction_statement": "Wildfires are expected to worsen in intensity and severity with climate change.",
       "direction_confidence": "",
