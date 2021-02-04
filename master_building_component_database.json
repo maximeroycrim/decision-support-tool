@@ -1,0 +1,15 @@
+{
+   "roof":{
+      "description":"",
+      "possible_hazards":["extreme rain","extreme snow","high winds"]
+      
+   },
+   "walls":{
+      "description":"",
+      "possible_hazards":["high winds"]
+      },
+   "basement":{
+      "description":"",
+      "possible_hazards":["sea level rise","river/lake flooding"]
+   }  
+}
