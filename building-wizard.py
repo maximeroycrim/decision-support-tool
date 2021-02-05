@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 A decision support tool for integrating climate change into building design, maintenance, and renovation.
+This python script is intended to demonstrate the underlying logic behind a proposed web-based decision support
+tool for the climatedata.ca Building Module.  
 """
 
 import json
@@ -35,9 +37,10 @@ print("\n")
 draw_stuff('wizard_start')
 
 print("\n")
-print("I AM A WIZARD THAT WILL GUIDE YOU IN STARTING YOUR BUILDING RISK ASSESSMENT AND ADAPTATION PLANNING PROCESS!\n")
-print("IF YOU ARE LUCKY I MAY EVEN FIND SOME GOOD CLIMATE DATA FOR YOU!\n")
-print("FOLLOW ALONG WITH ME ON THE EASY STEPS OF THIS MAGICAL JOURNEY!  IT WILL BE FUN!\n")
+print("I am a decision support tool that will help you begin the process of integrating climate change information into your building!\n")
+print("This process should take around 20 minutes to complete.  At the end, I hope you will have some pointers to some relevant climate information.\n")
+print("You'll also have a better sense of the workflow for using climate information within climate change risk and adaptation planning!\n")
+print("Life is short!  Let's get going!")
 print("\n")
 input("Press Enter to continue...")
 
@@ -51,13 +54,12 @@ print("\n")
 
 building_type=input("What type of building are you designing, building, or operating?\n >")
 building_stage=input("What stage of the building process are you in? (design stage, construction stage, retrofit, etc.) \n >")
-construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the desing stage, what's the anticipated year of completion?")
-design_life=input("What is your "+building_type+"'s intended design life (inteded service life before an intervention is required (retrofit, modernize, demolish, etc.)?\n >")
+construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the design stage, what's the anticipated final year of construction?")
+design_life=input("What is your "+building_type+"'s intended design life (intended service life before an intervention is required (retrofit, modernize, demolish, etc.)?\n >")
 if int(design_life) < 20:
     raise TypeError("Looks like your "+building_type+"'s design life is pretty short!  If this is the case, you may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
-
 design_year=int(construction_date) + int(design_life)
-decade=10*(round(int(design_year)/10))
+decade=int(round(design_year,-1))
 if decade > 2070:
     print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
     decade=2070
@@ -76,6 +78,11 @@ else:
     latitude=float(input("Enter your Latitude (in decimals): \n >"))
     longitude=float(input("Enter your Longitude (in degrees west, in decimals): \n >"))
 
+if not 41. <= latitude <= 84.:
+    raise TypeError("Looks like your latitude is outside of Canada.  Can you re-check this?\n")
+if not -142. <= longitude <= -.52:
+    raise TypeError("Looks like your longitude is outside of Canada.  Can you re-check this?\n")
+
 elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
 #NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
@@ -84,7 +91,7 @@ print("\n")
 print("STEP 2: WEATHER AND CLIMATE HAZARDS")
 print("\n")
 
-print("NEXT I NEED SOME MORE INFORMATION ABOUT WHAT WEATHER HAZARDS ARE OF MOST CONCERN TO YOU\n")
+print("NEXT, LET'S DEVELOP SOME INFORMATION ABOUT PRESENT AND POSSIBLE FUTURE WEATHER HAZARDS IN YOUR AREA!\n")
 print("I'LL PROVIDE SOME STATEMENTS, AND YOU SIMPLY TELL ME IF ANY OF THESE HAZARDS ARE OF CONCERN TO YOU!\n")
 draw_stuff("clouds")
 print("\n")
@@ -105,13 +112,13 @@ for key in hazard_list:
     draw_stuff(key)
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
-    if yes_or_no("Is your region prone to severe storms that bring heavy rains?\n"):
+    if yes_or_no("Is your region prone to "+key.upper()+"?\n"):
         hazard_dict[key]=master_hazard_dict[key] 
     else:
         print ("\n")
-        print ("Hmm, okay - so your region does not experience this hazard. But what about in the future?")
-        print ("I have some future climate data on "+key.upper()+" for a period that include the "+str(decade)+"'s, your building's estimated end-of-service-life")
-        input("Press ENTER and I'll show it to you. After you've had a look, come back here and we'll discuss.")
+        print ("Hmm, okay - so your region does not experience this hazard at present. But what about in the future?")
+        print ("I've found some future climate data on "+key.upper()+" for a period that include the "+str(decade)+"s, your building's estimated end-of-service-life")
+        input("Press ENTER and I'll show it to you. After you've had a look, come on back here.")
         if master_hazard_dict[key]["resource"]=="climatedata.ca":
             url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
         else:
@@ -119,13 +126,12 @@ for key in hazard_list:
             url=master_hazard_dict[key]["URL"]
         webbrowser.open(url,new=2,autoraise=False)
         print ("\n")
-        print ("So tell me: what did you see? Are there future values that exceed those observed in the historical period? Are there trends or patterns in the data? Is there a net increase or decrease over time?")
-        if yes_or_no("Based on the data you just saw, do you think that "+ key.upper()+ " could still emerge as a hazard in the future? If yes, I'll add this hazard to the list."):
+        #print ("So tell me: what did you see? Are there future values that exceed those observed in the historical period? Are there trends or patterns in the data? Is there a net increase or decrease over time?")
+        if yes_or_no("Based on the data you just saw, do you think that "+ key.upper()+ " could emerge as a concerning hazard in the future? If 'yes': I'll add this hazard to the list."):
             hazard_dict[key]=master_hazard_dict[key]
    
 print(clear)
-draw_stuff('sea level rise')    
-print ("JUST ONE QUICK QUESTION BEFORE I CONTINUE...")    
+draw_stuff('sea level rise')       
 if yes_or_no("Is your region near the ocean?\n"): #Jer: not sure we need this hierarchy of questions for SLR.  Kind of redundant..?
     if elev > 50.:
         key="sea level rise"
@@ -205,8 +211,8 @@ print(clear)
 print("\n")
 print("STEP 4: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
-print("LET'S DESCRIBE YOUR BUILDING IN MORE DETAIL!\n")
-print("I NEED YOU TO GENERATE A LIST OF BUILDING COMPONENTS. I'LL GET YOU STARTED, THEN FEEL FREE TO ADD IN AS MANY AS YOU LIKE ;)")
+print("Let's describe your building in some more detail!\n")
+print("I'll get you started with a few common building elements.  Then you can enter more afterwards.")
 
 # Initialize a list of building components that the user will grow interactively.
 # This list will store component-specific hazards.
@@ -217,11 +223,12 @@ with open('master_building_component_database.json', 'r') as j:
     master_building_component_dict = json.loads(j.read())
 
 for c in master_building_component_dict:
-    if yes_or_no("Does your builidng have " + master_building_component_dict[c]["sentence_start"] + " " + c + "?"):
+    if yes_or_no("Does your building have " + master_building_component_dict[c]["sentence_start"] + " " + c + "?"):
         building_component_dict[c]=master_building_component_dict[c]
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
-print("What are other key, major structural or system components of your building and property?  Enter as many as you like.  (type 'done' when done)\n")
+print("What are other key, major structural or system components of your building and property?\n")
+print("Enter as many as you like and don't forget about your building's surroundings.  (type 'done' when done)\n")
 
 while True:
     token=input("->")
@@ -238,37 +245,37 @@ print("\n")
 print("STEP 5: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 
-print("Now, let's review the climate hazards you identified, in the context of your building's components!\n")
+print("Now, let's consider the climate hazards you identified in the context of each of your building's components!\n")
 for component in building_component_dict:
-    haz=[]
+    per_component_hazard_dict={}
     for h in hazard_dict:
-        print("Let's consider "+h.upper()+", in the context of your building's "+component.upper()+".")
+        print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".")
         print(hazard_dict[h]["impact_statement"]+"  "+hazard_dict[h]["direction_statement"]+"  Reflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
-            haz.append(h) #append each relevant hazard to the list of hazards for each component
-    if 'other' in building_component_dict[component]: #extend list with any custom hazards provided by user.
-        print("Looks like you are thinking of other hazards.  What are they?  (type 'done' when done).")
-        while True:
-            token=input("->")
-            if token != "done":
-                haz.append(token)  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
-        else:
-            break   
-        building_component_dict[component].remove('other') #clean up redundant 'other' entry
+            per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
+
+    if per_component_hazard_dict != []:
+        print("You've identified a number of hazards that could impact your building's "+component+".\n")
+        print("For each hazard, identify from 1-10, how concerned you are about impacts to the "+component+".\n")
+        for k,v in per_component_hazard_dict.items():
+            per_component_hazard_dict[k]=input(k+" (1-10):")
+        
     print(clear)    
-    building_component_dict[component]=haz
-    
+    building_component_dict[component]=per_component_hazard_dict
+
+# %%
 #TODO: make logic to reorder list by priority
 #loop thorugh each haz, from 1-10 how much does it concern you?
 print(clear)
 print("\n")
 print("THIS PART OF THE PROGRAM IS UNDER CONSTRUCTION...")
 print("\n")
-print("We want to user to reflect on the magnitiude or the severity of these hazards, so that we can later rank which hazards and which components are seemingly most at risk from climate change. Will be most qualitative, and will not be as detailed as a proper risk computation from liklihood and magnitude.")
+print("We want to user to reflect on the concern they have for these hazards (e.g. perceived vulnerability), so that we can later rank which hazards and which components should be assessed in more detail in any subsequent risk computation based on liklihood and magnitude.")
 print("\n")
-input("Press ENTER to continue...")    
-#%% 
-
+input("Press ENTER to continue...")
+ 
+# %% 
+# TODO: refactor following code to account for change above (now, each component dictionary entry is assigned a dictionary not a list)
 print(clear)
 print("\n")
 print("STEP 6: SUMMARY REPORT AND YOUR NEXT STEPS")
@@ -311,21 +318,25 @@ print("\nIt might make sense to focus most on these hazards during your climate 
 print ("Press ENTER to continue")
 print (clear)
 
-print("SOME PARTING WISDOME BEFORE I LEAVE YOU TO CONTINUE ON YOUR QUEST...")
-print("Here are some resources for you to explore, to find information on how the hazards that may matter for your building may change with climate change!")
+print("I've identified some available climate data resources, specific to the hazards that you indicated your building may be (or become) vulnerable to!")
 for h,r in l_sorted:
-    print("\nFor "+h+", you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
+    print("\nTo better understand changes to "+h+" hazards, you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
     #if hazard_dict[h]["resource"]=="climatedata.ca":
         #url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
         #webbrowser.open(url,new=2,autoraise=False)
-
+#TODO: allow for multiple resource URLs
 #TODO: Improve this closing guidance.
 print("\n")
-print("You now have some links to climate data that speaks to hazards you think may impact your building!")
-print("You can now use this data to better understand how the likelihood and magnitude of these hazards will change.")
-print("You, in close collaboration with your building’s operators and stakeholders can develop a feeling for how consequential these changes will be using a risk assessment that compares present-day climate risks to future risks.")
-print("Then, if you see climate change increasing your building’s risks beyond a reasonable amount: you can develop adaptation actions that will ensure your building’s resilience!")
-print("\n")
+input("Before you go, let's summarize what you've done, and what you still need to do to ensure your building's climate resiliency! (press ENTER to continue)\n")
+input("1) You described your building's basics, including expected lifetime and major components... (press ENTER to continue)\n")
+input("2) You identified some key present and future climate hazards for your region... (press ENTER to continue)\n")
+input("3) You thought about which climate hazards could impact each of your building's components... (press ENTER to continue)\n")
+input("4) You developed a summary that prioritized major hazards and identified some promising climate information for each one... (ENTER to continue)\n")
+input("Your next tasks are: (ENTER to continue)\n")
+input("5) Get this climate information and develop a tailored climate change summary report for your building... (ENTER to continue)\n")
+input("6) Use this report to understand how the likelihood and severity of each hazard will change in the future... (ENTER to continue)\n")
+input("7) Undertake risk assessments for present and future conditions to understand how risks will change for each of your components over time... (ENTER to continue)\n")
+input("8) If any risk profiles risk to unacceptable levels due to climate change, consider developing risk reduction (adaptation) actions! (ENTER to continue)\n")
 draw_stuff('wizard_end')
 print ("POOF! ALL DONE")
 
