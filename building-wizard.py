@@ -115,6 +115,7 @@ for key in hazard_list:
         if master_hazard_dict[key]["resource"]=="climatedata.ca":
             url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
         else:
+            #TODO: for at least CRBCPI, find nearest city from NBCC representative locations
             url=master_hazard_dict[key]["URL"]
         webbrowser.open(url,new=2,autoraise=False)
         print ("\n")
@@ -163,6 +164,8 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
 # %%
 # GAUGE USER'S RISK TOLERANCE
 
+# TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
+
 print(clear)
 print("\n")
 print("STEP 3: RISK TOLERANCE AND CAPACITY ANALYSIS - **UNDER CONSTRUCTION**")
@@ -193,10 +196,11 @@ health_tolerance=input("answer: l=low tolerance; m=medium tolerance; h=high tole
 #risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
 #risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
-# TODO: provide an interim summary of climate trends?
-
 # %%
 ### PIEVC Step 2: DATA GATHERING ###
+
+# TODO: hone initial component list and list-generating language, so that user is guided towards an appropriate level of depth
+
 print(clear)
 print("\n")
 print("STEP 4: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
@@ -315,7 +319,7 @@ for h,r in l_sorted:
         #url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
         #webbrowser.open(url,new=2,autoraise=False)
 
-#TODO: your next steps are: get the data, do a proper engineering risk assessment, etc., assess your personal risks, adaption steps, etc.
+#TODO: Improve this closing guidance.
 print("\n")
 print("You now have some links to climate data that speaks to hazards you think may impact your building!")
 print("You can now use this data to better understand how the likelihood and magnitude of these hazards will change.")
