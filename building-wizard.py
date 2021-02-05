@@ -51,11 +51,17 @@ print("\n")
 
 building_type=input("What type of building are you designing, building, or operating?\n >")
 building_stage=input("What stage of the building process are you in? (design stage, construction stage, retrofit, etc.) \n >")
-
+construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the desing stage, what's the anticipated year of completion?")
 design_life=input("What is your "+building_type+"'s intended design life (inteded service life before an intervention is required (retrofit, modernize, demolish, etc.)?\n >")
 if int(design_life) < 20:
     raise TypeError("Looks like your "+building_type+"'s design life is pretty short!  If this is the case, you may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
-        
+
+design_year=int(construction_date) + int(design_life)
+decade=10*(round(int(design_year)/10))
+if decade > 2070:
+    print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
+    decade=2070
+    
 ## Get location
 
 if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually \n >"):
@@ -75,12 +81,14 @@ elev=float(input("How far above sea level is your building (in meters)? \n >"))
 #NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
 print(clear)
 print("\n")
-print("STEP 2: HISTORICAL AND FUTURE WEATHER AND CLIMATE HAZARDS")
+print("STEP 2: WEATHER AND CLIMATE HAZARDS")
 print("\n")
 
 print("NEXT I NEED SOME MORE INFORMATION ABOUT WHAT WEATHER HAZARDS ARE OF MOST CONCERN TO YOU\n")
-print("I'LL PROVIDE SOME STATEMENTS ABOUT HOW CLIMATE CHANGE MAY IMPACT THE WEATHER IN YOUR REGION, AND YOU SIMPLY TELL ME IF ANY OF THESE HAZARDS ARE OF CONCERN TO YOU!\n")
-
+print("I'LL PROVIDE SOME STATEMENTS, AND YOU SIMPLY TELL ME IF ANY OF THESE HAZARDS ARE OF CONCERN TO YOU!\n")
+draw_stuff("clouds")
+print("\n")
+input("Press ENTER to continue...")
 # %%
 
 # Initialize a blank list of weather hazards that the user will grow following a series of y/n questions:
@@ -91,103 +99,56 @@ with open('master_hazard_database.json', 'r') as j:
     master_hazard_dict = json.loads(j.read())
 
 #Dynamically generate a customized thazard_dict based on user prompts.
-draw_stuff('rain')
-key="extreme rain"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])
-if yes_or_no("Is your region prone to severe storms that bring heavy rains, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key] 
+hazard_list=["extreme rain","high winds","extreme heat","extreme cold","extreme snow","wildfire","river/lake flooding"]
+for key in hazard_list:
+    print(clear)
+    draw_stuff(key)
+    print(key.upper())
+    print(master_hazard_dict[key]["impact_statement"])
+    if yes_or_no("Is your region prone to severe storms that bring heavy rains?\n"):
+        hazard_dict[key]=master_hazard_dict[key] 
+    else:
+        print ("\n")
+        print ("Hmm, okay - so your region does not experience this hazard. But what about in the future?")
+        print ("I have some future climate data on "+key.upper()+" for a period that include the "+str(decade)+"'s, your building's estimated end-of-service-life")
+        input("Press ENTER and I'll show it to you. After you've had a look, come back here and we'll discuss.")
+        if master_hazard_dict[key]["resource"]=="climatedata.ca":
+            url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
+        else:
+            url=master_hazard_dict[key]["URL"]
+        webbrowser.open(url,new=2,autoraise=False)
+        print ("\n")
+        print ("So tell me: what did you see? Are there future values that exceed those observed in the historical period? Are there trends or patterns in the data? Is there a net increase or decrease over time?")
+        if yes_or_no("Based on the data you just saw, do you think that "+ key.upper()+ " could still emerge as a hazard in the future? If yes, I'll add this hazard to the list."):
+            hazard_dict[key]=master_hazard_dict[key]
+   
 print(clear)
-draw_stuff('tornado')
-key="high winds"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])
-if yes_or_no("Is your region prone to heavy winds, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key]
-print(clear)
-draw_stuff('sun')   
-key="extreme heat"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])    
-if yes_or_no("Is your region prone to prolonged and dangerous heat wave, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key]
-print(clear)
-
-draw_stuff('north')    
-key="extreme cold"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])    
-if yes_or_no("Is your region prone to prolonged and dangerous cold snaps, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key]   
-print(clear)
-draw_stuff('snowfall')    
-key="extreme snow"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])    
-if yes_or_no("Is your region prone to heavy, damaging, snow storms or snow accumulation, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key]
-print(clear)
-draw_stuff('sea')    
+draw_stuff('sea level rise')    
 print ("JUST ONE QUICK QUESTION BEFORE I CONTINUE...")    
 if yes_or_no("Is your region near the ocean?\n"): #Jer: not sure we need this hierarchy of questions for SLR.  Kind of redundant..?
     if elev > 50.:
         key="sea level rise"
         print(key.upper())
         print(master_hazard_dict[key]["impact_statement"])
-        print(master_hazard_dict[key]["direction_statement"])
         if yes_or_no("Based on your elevation, even though your region is near the ocean, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?\n") is False:
             hazard_dict[key]=master_hazard_dict[key]
     else:
         key="sea level rise"
         hazard_dict[key]=master_hazard_dict[key]            
-#    if yes_or_no("Are you concerned about extra-tropical storms (including Hurricanes) at this location?\n"): #The actual hazards from these storms is wind, rain, and coastal flooding.  Since we cover these already, not sure we need to include a specific storm category here...?
-#        key="tropical storms"
-#        hazard_dict[key]=master_hazard_dict[key]
-#    if yes_or_no("Are you concerned about marine coastal erosion at this location?\n"): #Shoreline erosion is an impact that is caused by wind/wave hazard.  So, not sure we need to add it to list of hazards.  Also, should be clear on erosion in marine, and also river/lake perspectives
-#        key="erosion"
-#        hazard_dict[key]=master_hazard_dict[key]
-print(clear)
-
-draw_stuff('lightning')
-key="wildfire"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])
-if yes_or_no("Is your region prone to wildfires or smoke from wildfires, either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-        hazard_dict[key]=master_hazard_dict[key]
-print(clear)
 
 if latitude > 55.: #This threshold was quickly set - should re-evaluate based on CRBCPI or other, Canadian permafrost map.
-    draw_stuff('north')
+    draw_stuff('extreme cold')
     key="permafrost loss"
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
-    print(master_hazard_dict[key]["direction_statement"])
     if yes_or_no("Does any permafrost occur in your region?\n"):
         hazard_dict[key]=master_hazard_dict[key]
     print(clear)
-#else:
-#   if yes_or_no("Based on your latitude, it sounds like you may not have to worry about permafrost loss.  Is it OK to skip an assessment of sea level rise on your building?\n") is False:
-#        print("OK, let's keep permafrost in the mix.")
-#        key="permafrost loss"
-#        hazard_dict[key]=master_hazard_dict[key]
 
-draw_stuff('rain')
-key="river/lake flooding"
-print(key.upper())
-print(master_hazard_dict[key]["impact_statement"])
-print(master_hazard_dict[key]["direction_statement"])
-if yes_or_no("Is your region lowlying, and susceptible to river or lake flooding either NOW or IN THE FUTURE BASED ON THE ABOVE STATEMENT?\n"):
-    hazard_dict[key]=master_hazard_dict[key]
-print(clear)
 
 # %%
 # And allow for 'other' entries
+print(clear)
 token=[]
 if yes_or_no("Any other weather hazards you want to tell me about before we continue?\n"):
     print("Please enter these hazards below (or type 'done' if you are done)")
@@ -350,9 +311,9 @@ print("SOME PARTING WISDOME BEFORE I LEAVE YOU TO CONTINUE ON YOUR QUEST...")
 print("Here are some resources for you to explore, to find information on how the hazards that may matter for your building may change with climate change!")
 for h,r in l_sorted:
     print("\nFor "+h+", you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
-    if hazard_dict[h]["resource"]=="climatedata.ca":
-        url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(hazard_dict[h]["decade"])+"s&sector="
-        webbrowser.open(url,new=2,autoraise=False)
+    #if hazard_dict[h]["resource"]=="climatedata.ca":
+        #url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
+        #webbrowser.open(url,new=2,autoraise=False)
 
 #TODO: your next steps are: get the data, do a proper engineering risk assessment, etc., assess your personal risks, adaption steps, etc.
 print("\n")

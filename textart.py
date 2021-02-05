@@ -1,5 +1,5 @@
 def draw_stuff(thing):
-    if thing == 'rain':
+    if thing == 'extreme rain':
         print("                            000      00            ")
         print("                           0000000   0000        ")
         print("              0      00  00000000000000000        ")
@@ -70,7 +70,7 @@ def draw_stuff(thing):
         print("   ``''''`'`''''))''`' ")
         return
     
-    if thing == 'tornado':
+    if thing == 'high winds':
         print(" --_-_-_-_--- ")
         print("    -_-_-_ ")
         print("     -_-_- ")
@@ -81,7 +81,7 @@ def draw_stuff(thing):
         print("     _-_ ")
         return
     
-    if thing == 'sun':
+    if thing == 'extreme heat':
         print("         \     (      / ")
         print("    `.    \     )    /    .' ")
         print("      `.   \   (    /   .' ")
@@ -99,7 +99,7 @@ def draw_stuff(thing):
         print("               ( ")
         return
     
-    if thing == 'snowfall':
+    if thing == 'extreme snow':
         print("  -   -       -   -     -  -  -    -     -       -   -   -  -    - ")
         print(" - -   (  -      -    -  -   -   -    -   -    -   -   -    -     - ")
         print(" -  (     )   (   |\  -  -       -     -      -    -  --    -  - - ")
@@ -118,7 +118,7 @@ def draw_stuff(thing):
         print("      `—————————————————————————' ")
         return
     
-    if thing=='sea':
+    if thing=='sea level rise':
         print("    (_  ( . ) )__                  '.    \   :   /    .' ")
         print("      '(___(_____)      __           '.   \  :  /   .' ")
         print("                      /. _\            '.  \ : /  .' ")
@@ -139,7 +139,7 @@ def draw_stuff(thing):
         print("    ~                  ~    ~ ~                 ~ ")
         return
     
-    if thing=='lightning':
+    if thing=='wildfire':
         print("      _, .--. ")
         print("     (  / (  '-. ")
         print("     .-=-.    ) -. ")
@@ -155,7 +155,7 @@ def draw_stuff(thing):
         print("         -.'.`\.'.- ")
         return
     
-    if thing=='north':
+    if thing=='extreme cold':
         print("   ` : | | | |:  ||  :     `  :  |  |+|: | : : :|   .        `              . ")
         print("       ` : | :|  ||  |:  :    `  |  | :| : | : |:   |  .                    : ")
         print("          .' ':  ||  |:  |  '       ` || | : | |: : |   .  `           .   :. ")
