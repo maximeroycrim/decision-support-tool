@@ -248,7 +248,7 @@ print("\n")
 print("Now, let's consider the climate hazards you identified in the context of each of your building's components!\n")
 for component in building_component_dict:
     per_component_hazard_dict={}
-    for h in hazard_dict:
+    for h,v in hazard_dict.items():
         print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".")
         print(hazard_dict[h]["impact_statement"]+"  "+hazard_dict[h]["direction_statement"]+"  Reflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
@@ -258,22 +258,11 @@ for component in building_component_dict:
         print("You've identified a number of hazards that could impact your building's "+component+".\n")
         print("For each hazard, identify from 1-10, how concerned you are about impacts to the "+component+".\n")
         for k,v in per_component_hazard_dict.items():
-            per_component_hazard_dict[k]=input(k+" (1-10):")
-        
+            per_component_hazard_dict[k]=int(input(k+" (1-10):"))
+    
     print(clear)    
     building_component_dict[component]=per_component_hazard_dict
 
-# %%
-#TODO: make logic to reorder list by priority
-#loop thorugh each haz, from 1-10 how much does it concern you?
-print(clear)
-print("\n")
-print("THIS PART OF THE PROGRAM IS UNDER CONSTRUCTION...")
-print("\n")
-print("We want to user to reflect on the concern they have for these hazards (e.g. perceived vulnerability), so that we can later rank which hazards and which components should be assessed in more detail in any subsequent risk computation based on liklihood and magnitude.")
-print("\n")
-input("Press ENTER to continue...")
- 
 # %% 
 # TODO: refactor following code to account for change above (now, each component dictionary entry is assigned a dictionary not a list)
 print(clear)
@@ -286,17 +275,16 @@ print("LET ME SUMMARIZE YOUR RESULTS, AND TRY TO POINT YOU TO SOME POTENTIAL SOU
 
 sep="\n->"
 
-# Summarize hazards by component
-for component in building_component_dict:
-    print("Let's consider the "+component+" of your building.")
-    print("It sounds like your building's "+component+" could be vulnerable to climate change-caused shifts to:\n"+sep+sep.join(building_component_dict[component]))
-    print(" ")
+# Estimate component(s) with most/least vulnerabilities by summing up numerical rankings for all hazards for each component.
 
-# Find component(s) with most/least vulnerabilities.  Code deals with ties.
-mx = max(len(x) for x in iter(building_component_dict.values()))
-mn = min(len(x) for x in iter(building_component_dict.values()))
-most_vulnerable_components=[k for k, v in iter(building_component_dict.items()) if len(v)==mx]
-least_vulnerable_components=[k for k, v in iter(building_component_dict.items()) if len(v)==mn]
+for component,per_component_hazard_dict in building_component_dict.items():
+    sumval=0
+    for hazard,ranking in per_component_hazard_dict.items():
+        sumval=sumval+ranking
+    print(sumval)
+    building_component_dict[component]["total_hazard_sum"]=sumval
+    
+    #TODO : continue here!  Identify component(s) with highest scores
 
 input("Press ENTER to continue...")
 
