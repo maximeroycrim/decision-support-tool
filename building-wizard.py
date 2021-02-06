@@ -54,7 +54,7 @@ print("\n")
 
 building_type=input("What type of building are you designing, building, or operating?\n >")
 building_stage=input("What stage of the building process are you in? (design stage, construction stage, retrofit, etc.) \n >")
-construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the design stage, what's the anticipated final year of construction?")
+construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the design stage, what's the anticipated final year of construction? \n >")
 design_life=input("What is your "+building_type+"'s intended design life (intended service life before an intervention is required (retrofit, modernize, demolish, etc.)?\n >")
 if int(design_life) < 20:
     raise TypeError("Looks like your "+building_type+"'s design life is pretty short!  If this is the case, you may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
@@ -116,8 +116,8 @@ for key in hazard_list:
         hazard_dict[key]=master_hazard_dict[key] 
     else:
         print ("\n")
-        print ("Hmm, okay - so your region does not experience this hazard at present. But what about in the future?")
-        print ("I've found some future climate data on "+key.upper()+" for a period that include the "+str(decade)+"s, your building's estimated end-of-service-life")
+        print ("Hmm, okay - so your region does not experience this hazard NOW. But what about in the FUTURE?")
+        print ("I've found some future climate data on "+key.upper()+" for a period that includes the "+str(decade)+"s, your building's estimated end-of-service-life")
         input("Press ENTER and I'll show it to you. After you've had a look, come on back here.")
         if master_hazard_dict[key]["resource"]=="climatedata.ca":
             url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
@@ -246,17 +246,22 @@ print("STEP 5: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 
 print("Now, let's consider the climate hazards you identified in the context of each of your building's components!\n")
+input("Press Enter to continue...")
 for component in building_component_dict:
     per_component_hazard_dict={}
     for h,v in hazard_dict.items():
-        print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".")
-        print(hazard_dict[h]["impact_statement"]+"  "+hazard_dict[h]["direction_statement"]+"  Reflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
+        print(clear)
+        print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".\n")
+        print(hazard_dict[h]["impact_statement"]+"  "+hazard_dict[h]["direction_statement"]+"/nReflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
             per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
-
+    print(clear)
     if per_component_hazard_dict != []:
         print("You've identified a number of hazards that could impact your building's "+component+".\n")
         print("For each hazard, identify from 1-10, how concerned you are about impacts to the "+component+".\n")
+        print("\nUse the following qualitative scale:\n")
+        print("    <1----------------------------------------------------------------10>")
+        print("not very concerned                                           extremely concerned")
         for k,v in per_component_hazard_dict.items():
             per_component_hazard_dict[k]=int(input(k+" (1-10):"))
     
@@ -281,19 +286,38 @@ for component,per_component_hazard_dict in building_component_dict.items():
     sumval=0
     for hazard,ranking in per_component_hazard_dict.items():
         sumval=sumval+ranking
+    
     print(sumval)
     building_component_dict[component]["total_hazard_sum"]=sumval
     
-    #TODO : continue here!  Identify component(s) with highest scores
+ranks=[]
+for component in building_component_dict:
+    ranks.append(building_component_dict[component]["total_hazard_sum"])
+    
+sortrank=sorted(ranks, reverse=True)
+
 
 input("Press ENTER to continue...")
 
 print(clear)
 
-print("Based on these lists, it looks like the building components that may be most vulnerable to climate change are:\n"+sep+sep.join(most_vulnerable_components))
-print("\nIt might make sense to focus most on these components during your climate change risk assessment.")
-print("Conversely, your least vulnerable building components look to to be:\n"+sep+sep.join(least_vulnerable_components)+"\n")
+print("Based on your entries, I have attempted to rank your building's components from MOST to LEAST vulnerable:\n")
+j=0
+for i in range(len(sortrank)):
+    if i+j < len(sortrank):
+        flag=0
+        for component in building_component_dict:
+            if building_component_dict[component]["total_hazard_sum"]==sortrank[i+j]:
+                if flag != 1:
+                    print("  "+str(i+j+1)+".  "+component)
+                else:
+                    print("  "+str(i+j+1)+". (tie)  " + component)
+                    j+=1
+                flag=1
 
+print("\nIt might make sense to focus most on the components nearer the top of this list during your climate change risk assessment.")
+#print("Conversely, your least vulnerable building components look to to be:\n"+sep+sep.join(least_vulnerable_components)+"\n")
+'''
 # Rank hazards by # of times they are mentioned as component hazards.  Display top hazards.
 hazard_list=sum(building_component_dict.values(), [])
 l_sorted=Counter(hazard_list).most_common()
@@ -302,16 +326,18 @@ print("Based on these lists, the top climate hazards for your building appear to
 for h in range(max_len):
     print("->"+l_sorted[h][0])
 print("\nIt might make sense to focus most on these hazards during your climate change risk assessment climate data gathering.\n")
-
-print ("Press ENTER to continue")
+'''
+input ("Press ENTER to continue")
 print (clear)
 
+'''
 print("I've identified some available climate data resources, specific to the hazards that you indicated your building may be (or become) vulnerable to!")
 for h,r in l_sorted:
     print("\nTo better understand changes to "+h+" hazards, you may want to check out: " + hazard_dict[h]["resource"] + ":\n" + hazard_dict[h]["URL"])
     #if hazard_dict[h]["resource"]=="climatedata.ca":
         #url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
         #webbrowser.open(url,new=2,autoraise=False)
+'''
 #TODO: allow for multiple resource URLs
 #TODO: Improve this closing guidance.
 print("\n")
