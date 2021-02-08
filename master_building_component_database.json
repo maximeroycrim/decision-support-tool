@@ -5,12 +5,12 @@
       "possible_hazards":["extreme rain","extreme snow","high winds"]
       
    },
-   "roof":{
+   "flat roof":{
       "sentence_start":"a",
       "description":"",
       "possible_hazards":["high winds"]
       },
-   "insulation":{
+   "wood framing":{
       "sentence_start":"",
       "description":"",
       "possible_hazards":["sea level rise","river/lake flooding"]

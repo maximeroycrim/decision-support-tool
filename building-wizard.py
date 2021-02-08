@@ -168,39 +168,41 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
            
 
 # %%
-# GAUGE USER'S RISK TOLERANCE
+# GAUGE USER'S RISK TOLERANCE - suggested change: make this about training and guidance?
 
 # TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
 
 print(clear)
+draw_stuff("books")
 print("\n")
-print("STEP 3: RISK TOLERANCE AND CAPACITY ANALYSIS - **UNDER CONSTRUCTION**")
+print("STEP 3: PRE-ANALYSIS CHECK LIST")
 print("\n")
 
-print ("\n")
-print ("BEFORE WE CONTINUE, IT'S IMPORTANT THAT WE HAVE 'THE TALK'. YOU KNOW WHAT I MEAN. LET'S TALK ABOUT THE BIG ELEPHANT IN THE ROOM: UNCERTAINTY.")
-print ("\n")
 print ("UNLIKE HISTORICAL CLIMATE NORMALS, FUTURE CLIMATE CONDITIONS CAN'T BE BOILED DOWN TO A SINGLE NUMBER.")
 print ("IN FACT, THE FUTURE IS FAR FROM CERTAIN. THE AMOUNT OF FUTURE CLIMATE CHANGE ONE NEEDS TO PLAN FOR DEPENDS LARGELY ON FUTURE GREENHOUSE EMISSIONS.")
 print ("\n")
 print ("YOU COULD ALWAYS 'PLAN FOR THE WORST AND HOPE FOR THE BEST,' BUT IT ISN'T ALWAYS FINANCIALLY POSSIBLE TO PLAN FOR ALL POSSIBLE FUTURE HAZARDS.")
 print ("\n")
-print ("I WANT TO GUAGE YOUR TOLERANCE FOR FUTURE CLIMATE UNCERTAINY BY ASKING A FEW SIMPLE QUESTIONS : ")
+print ("BEGIN PRE-FLIGHT CHECK LIST:")
 print ("\n")
-print ("How would you rate your risk tolerance? This is the maximum amount of uncertainty you are willing to take on and still be able to sleep at night")
-financial_tolerance=input("answer: l=low tolerance; m=medium tolerance; h=high tolerance \n >")
+if yes_or_no("Have you watched our short training video on future climate scenarios?\n >") is False:
+    print("OK, I'll wait here while you go watch that video. It won't take long.")
+    url="https://climatedata.ca/resource/introduction-to-decision-making-using-climate-scenarios/"
+    webbrowser.open(url,new=2,autoraise=False)
 
-print ("How would you rate your risk capcity? This is the amount of risk you must take on in order to achieve your goals.")
-financial_capacity=input("answer: l=low capacity; m=medium capacity; h=high capacity \n >")
+if yes_or_no("Have you watched our short training video on understanding ranges in climate projections?\n >") is False:
+    url="https://climatedata.ca/resource/understanding-ranges-in-climate-projections/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+if yes_or_no("Have you used ClimateData.ca before, and are comfortable with navigating the map?\n>") is False:
+    url="https://climatedata.ca/resource/how-to-navigate-variable-maps/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+print("\n")
+input("When you're ready to continue, press ENTER...")
 
-print ("How would your rate your building's adaptive capacity? In other words, this is how much additional capacity the current design has to withstand an increase in climate risks.")
-adaptive_capacity=input("answer: l=low capacity; m=medium capacity; h=high capacity \n >")
 
-print ("Finally, what is your health and safety risk tolerance? This is the likihood that exposure to a hazard could result in harm or other adverse health impacts.")
-health_tolerance=input("answer: l=low tolerance; m=medium tolerance; h=high tolerance \n >")
 
-#risk_tolerance=input("What is your risk tolerance when it comes to future climate change (h=high, m=medium, l=low)? Understanding your risk tolerance helps decide which climate scenario to use. ")
-#risk_dict={"l":"RCP8.5","m":"RCP4.5","h":"RCP2.6"}
 
 # %%
 ### PIEVC Step 2: DATA GATHERING ###
