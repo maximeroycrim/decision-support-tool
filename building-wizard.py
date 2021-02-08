@@ -289,7 +289,6 @@ for component,per_component_hazard_dict in building_component_dict.items():
     for hazard,ranking in per_component_hazard_dict.items():
         sumval=sumval+ranking
     
-    print(sumval)
     building_component_dict[component]["total_hazard_sum"]=sumval
     
 ranks=[]
@@ -298,11 +297,7 @@ for component in building_component_dict:
     
 sortrank=sorted(ranks, reverse=True)
 
-
-input("Press ENTER to continue...")
-
-print(clear)
-
+print ("\n")
 print("Based on your entries, I have attempted to rank your building's components from MOST to LEAST vulnerable:\n")
 j=0
 for i in range(len(sortrank)):
