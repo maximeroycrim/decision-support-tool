@@ -7,7 +7,6 @@ tool for the climatedata.ca Building Module.
 
 import json
 from geopy.geocoders import Nominatim
-from collections import Counter
 import webbrowser
 from textart import draw_stuff
 
@@ -165,44 +164,6 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
             hazard_dict.update({token:master_hazard_dict["other"]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
         else:
             break
-           
-
-# %%
-# GAUGE USER'S RISK TOLERANCE - suggested change: make this about training and guidance?
-
-# TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
-
-print(clear)
-draw_stuff("books")
-print("\n")
-print("STEP 3: PRE-ANALYSIS CHECK LIST")
-print("\n")
-
-print ("UNLIKE HISTORICAL CLIMATE NORMALS, FUTURE CLIMATE CONDITIONS CAN'T BE BOILED DOWN TO A SINGLE NUMBER.")
-print ("IN FACT, THE FUTURE IS FAR FROM CERTAIN. THE AMOUNT OF FUTURE CLIMATE CHANGE ONE NEEDS TO PLAN FOR DEPENDS LARGELY ON FUTURE GREENHOUSE EMISSIONS.")
-print ("\n")
-print ("YOU COULD ALWAYS 'PLAN FOR THE WORST AND HOPE FOR THE BEST,' BUT IT ISN'T ALWAYS FINANCIALLY POSSIBLE TO PLAN FOR ALL POSSIBLE FUTURE HAZARDS.")
-print ("\n")
-print ("BEGIN PRE-FLIGHT CHECK LIST:")
-print ("\n")
-if yes_or_no("Have you watched our short training video on future climate scenarios?\n >") is False:
-    print("OK, I'll wait here while you go watch that video. It won't take long.")
-    url="https://climatedata.ca/resource/introduction-to-decision-making-using-climate-scenarios/"
-    webbrowser.open(url,new=2,autoraise=False)
-
-if yes_or_no("Have you watched our short training video on understanding ranges in climate projections?\n >") is False:
-    url="https://climatedata.ca/resource/understanding-ranges-in-climate-projections/"
-    webbrowser.open(url,new=2,autoraise=False)
-    
-if yes_or_no("Have you used ClimateData.ca before, and are comfortable with navigating the map?\n>") is False:
-    url="https://climatedata.ca/resource/how-to-navigate-variable-maps/"
-    webbrowser.open(url,new=2,autoraise=False)
-    
-print("\n")
-input("When you're ready to continue, press ENTER...")
-
-
-
 
 # %%
 ### PIEVC Step 2: DATA GATHERING ###
@@ -211,7 +172,7 @@ input("When you're ready to continue, press ENTER...")
 
 print(clear)
 print("\n")
-print("STEP 4: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
+print("STEP 3: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 print("Let's describe your building in some more detail!\n")
 print("I'll get you started with a few common building elements.  Then you can enter more afterwards.")
@@ -244,7 +205,7 @@ while True:
 ##Provide some standard hazards, and then prompt user to add more if needed
 print(clear)
 print("\n")
-print("STEP 5: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
+print("STEP 4: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 
 print("Now, let's consider the climate hazards you identified in the context of each of your building's components!\n")
@@ -274,7 +235,7 @@ for component in building_component_dict:
 # TODO: refactor following code to account for change above (now, each component dictionary entry is assigned a dictionary not a list)
 print(clear)
 print("\n")
-print("STEP 6: SUMMARY REPORT AND YOUR NEXT STEPS")
+print("STEP 5: SUMMARY REPORT")
 print("\n")
 
 print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO A FULL CLIMATE CHANGE RISK ASSESSMENT!\n")
@@ -337,8 +298,14 @@ for h,r in l_sorted:
 '''
 #TODO: allow for multiple resource URLs
 #TODO: Improve this closing guidance.
+
+print(clear)
 print("\n")
-input("Before you go, let's summarize what you've done, and what you still need to do to ensure your building's climate resiliency! (press ENTER to continue)\n")
+print("STEP 6: NEXT STEPS")
+print("\n")
+
+print("\n")
+input("Let's summarize what you've done here - AND - what you still need to do to ensure your building's climate resiliency! (press ENTER to continue)\n")
 input("1) You described your building's basics, including expected lifetime and major components... (press ENTER to continue)\n")
 input("2) You identified some key present and future climate hazards for your region... (press ENTER to continue)\n")
 input("3) You thought about which climate hazards could impact each of your building's components... (press ENTER to continue)\n")
@@ -348,6 +315,39 @@ input("5) Get this climate information and develop a tailored climate change sum
 input("6) Use this report to understand how the likelihood and severity of each hazard will change in the future... (ENTER to continue)\n")
 input("7) Undertake risk assessments for present and future conditions to understand how risks will change for each of your components over time... (ENTER to continue)\n")
 input("8) If any risk profiles risk to unacceptable levels due to climate change, consider developing risk reduction (adaptation) actions! (ENTER to continue)\n")
+
+# %%
+# GAUGE USER'S RISK TOLERANCE - suggested change: make this about training and guidance?
+# TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
+print(clear)
+draw_stuff("books")
+
+print ("UNLIKE HISTORICAL CLIMATE NORMALS, FUTURE CLIMATE CONDITIONS CAN'T BE BOILED DOWN TO A SINGLE NUMBER.")
+print ("IN FACT, THE FUTURE IS FAR FROM CERTAIN. THE AMOUNT OF FUTURE CLIMATE CHANGE ONE NEEDS TO PLAN FOR DEPENDS LARGELY ON FUTURE GREENHOUSE EMISSIONS.")
+print ("\n")
+print ("YOU COULD ALWAYS 'PLAN FOR THE WORST AND HOPE FOR THE BEST,' BUT IT ISN'T ALWAYS FINANCIALLY POSSIBLE TO PLAN FOR ALL POSSIBLE FUTURE HAZARDS.")
+print ("\n")
+print ("BEGIN PRE-FLIGHT CHECK LIST:")
+print ("\n")
+if yes_or_no("Have you watched our short training video on future climate scenarios?\n >") is False:
+    print("OK, I'll wait here while you go watch that video. It won't take long.")
+    url="https://climatedata.ca/resource/introduction-to-decision-making-using-climate-scenarios/"
+    webbrowser.open(url,new=2,autoraise=False)
+
+if yes_or_no("Have you watched our short training video on understanding ranges in climate projections?\n >") is False:
+    url="https://climatedata.ca/resource/understanding-ranges-in-climate-projections/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+if yes_or_no("Have you used ClimateData.ca before, and are comfortable with navigating the map?\n>") is False:
+    url="https://climatedata.ca/resource/how-to-navigate-variable-maps/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+print("\n")
+print("Well done, and good luck with using this climate information and training to increase your building's resilience to climate change!")
+email_address=input("Enter your email address to receive a brief report that summarizes the results of this decision support tool!")
+input("When you're ready to say goodbye to me, press ENTER!")
+
+
 draw_stuff('wizard_end')
 print ("POOF! ALL DONE")
 
