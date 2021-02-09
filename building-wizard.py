@@ -199,8 +199,8 @@ for key in hazard_list:
                     num+=1
                     total_high+=row[2]
             
-        print("   "+str(master_hazard_dict[key]["var"]+"RCP8.5 30-yr average 90th p average = " + str(round((total_high/num),1))))
-        print("   "+str(master_hazard_dict[key]["var"]+"RCP8.5 30-yr average 10th p average = " + str(round((total_low/num),1))))
+        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 90th p average = " + str(round((total_high/num),1))))
+        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 10th p average = " + str(round((total_low/num),1))))
         
     else:
         #TODO: for at least CRBCPI, find nearest city from NBCC representative locations
