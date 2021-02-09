@@ -6,9 +6,13 @@ tool for the climatedata.ca Building Module.
 """
 
 import json
+import csv
 from geopy.geocoders import Nominatim
 import webbrowser
 from textart import draw_stuff
+import requests
+from io import StringIO
+from numpy import mean
 
 #SETUP FUCNTIONS
 
@@ -84,10 +88,47 @@ if not -142. <= longitude <= -.52:
 
 elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
+# %%
+### PIEVC Step 2: DATA GATHERING ###
+
+# TODO: hone initial component list and list-generating language, so that user is guided towards an appropriate level of depth
+
+print(clear)
+print("\n")
+print("STEP 2: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
+print("\n")
+print("Let's describe your building in some more detail!\n")
+print("I'll get you started with a few common building elements.  Then you can enter more afterwards.")
+
+# Initialize a list of building components that the user will grow interactively.
+# This list will store component-specific hazards.
+building_component_dict={}
+
+# Load the master list of building components, from which a subset of user-specific building hazards is built,
+with open('master_building_component_database.json', 'r') as j:
+    master_building_component_dict = json.loads(j.read())
+
+for c in master_building_component_dict:
+    if yes_or_no("Does your building have " + master_building_component_dict[c]["sentence_start"] + " " + c + "?"):
+        building_component_dict[c]=master_building_component_dict[c]
+
+# Prompt the user to define the components of their building.  This list can be as long as needed.
+print("What are other key, major structural or system components of your building and property?\n")
+print("Enter as many as you like and don't forget about your building's surroundings.  (type 'done' when done)\n")
+
+while True:
+    token=input("->")
+    if token != "done":
+        building_component_dict[token]=[]  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
+    else:
+        break 
+
+#%%
+
 #NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
 print(clear)
 print("\n")
-print("STEP 2: WEATHER AND CLIMATE HAZARDS")
+print("STEP 3: WEATHER HAZARDS AND CLIMATE DATA")
 print("\n")
 
 print("NEXT, LET'S DEVELOP SOME INFORMATION ABOUT PRESENT AND POSSIBLE FUTURE WEATHER HAZARDS IN YOUR AREA!\n")
@@ -111,23 +152,65 @@ for key in hazard_list:
     draw_stuff(key)
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
-    if yes_or_no("Is your region prone to "+key.upper()+"?\n"):
-        hazard_dict[key]=master_hazard_dict[key] 
+
+    
+   
+    if master_hazard_dict[key]["resource"]=="climatedata.ca":
+        print ("\nI've found some data on ClimateData.ca that is related to "+key.upper()+". This data is for your location. I'll open the map in your web browser, and also summarize the recent past as well as a period that includes the "+str(decade)+"s, your building's estimated end-of-service-life:\n")
+        #url containing map; note this is kinda annoying... need to find a less pop-up approach if possible
+        url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
+        #url containing line chart data
+        data_url="https://data.climatedata.ca/generate-charts/"+str(latitude)+"/"+str(longitude)+"/"+str(master_hazard_dict[key]["var"])+"/ann"
+        r = requests.get(data_url)
+        data=r.json()
+        #note: the year 1970 is the 'zero' year for the chart data
+        #note: times are given in miliseconds from/since 1970... wonder why miliseconds?
+        baseline=data['modeled_historical_median']
+        total=0
+        num=0
+        print("Baseline period = 1971-2000")
+        for row in baseline:
+            if row[0] > 0:
+                if row[0] <= ((2000-1970)*31536000000):
+                    total+=row[1]
+                    num+=1
+        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average median = " + str(round((total/num),1))))
+        print("\n")
+        print("Future period = "+str(decade+1)+"-"+str(decade+30)+", RCP8.5")
+        
+        future=data['rcp85_median']
+        total=0
+        num=0
+        for row in baseline:
+            if row[0] > 0:
+                if row[0] <= ((2000-1970)*31536000000):
+                    total+=row[1]
+                    num+=1
+        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average median = " + str(total/num)))
+        
+        rcp85_range=data['rcp85_range']
+        total_low=0
+        total_high=0
+        num=0
+        for row in rcp85_range:
+            if row[0] >= ((decade-1970)*31536000000):
+                if row[0] <= ((decade+30-1970)*31536000000):
+                    total_low+=row[1]
+                    num+=1
+                    total_high+=row[2]
+            
+        print("   "+str(master_hazard_dict[key]["var"]+"RCP8.5 30-yr average 90th p average = " + str(round((total_high/num),1))))
+        print("   "+str(master_hazard_dict[key]["var"]+"RCP8.5 30-yr average 10th p average = " + str(round((total_low/num),1))))
+        
     else:
-        print ("\n")
-        print ("Hmm, okay - so your region does not experience this hazard NOW. But what about in the FUTURE?")
-        print ("I've found some future climate data on "+key.upper()+" for a period that includes the "+str(decade)+"s, your building's estimated end-of-service-life")
-        input("Press ENTER and I'll show it to you. After you've had a look, come on back here.")
-        if master_hazard_dict[key]["resource"]=="climatedata.ca":
-            url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(master_hazard_dict[key]["var"])+"&var-group="+str(master_hazard_dict[key]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
-        else:
-            #TODO: for at least CRBCPI, find nearest city from NBCC representative locations
-            url=master_hazard_dict[key]["URL"]
-        webbrowser.open(url,new=2,autoraise=False)
-        print ("\n")
-        #print ("So tell me: what did you see? Are there future values that exceed those observed in the historical period? Are there trends or patterns in the data? Is there a net increase or decrease over time?")
-        if yes_or_no("Based on the data you just saw, do you think that "+ key.upper()+ " could emerge as a concerning hazard in the future? If 'yes': I'll add this hazard to the list."):
-            hazard_dict[key]=master_hazard_dict[key]
+        #TODO: for at least CRBCPI, find nearest city from NBCC representative locations
+        print ("\nClimateData.ca does not contain "+key.upper()+" data yet; however, I found this resource that I think might be of interest to you:")
+        url=master_hazard_dict[key]["URL"]
+    webbrowser.open(url,new=0,autoraise=False)
+    
+    if yes_or_no("Based on what you see, and without worrying about being too precise at this point in the process, could your region be prone to "+key.upper()+", either now or in the future?\n"):
+        hazard_dict[key]=master_hazard_dict[key] 
+        
    
 print(clear)
 draw_stuff('sea level rise')       
@@ -165,40 +248,7 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
         else:
             break
 
-# %%
-### PIEVC Step 2: DATA GATHERING ###
 
-# TODO: hone initial component list and list-generating language, so that user is guided towards an appropriate level of depth
-
-print(clear)
-print("\n")
-print("STEP 3: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
-print("\n")
-print("Let's describe your building in some more detail!\n")
-print("I'll get you started with a few common building elements.  Then you can enter more afterwards.")
-
-# Initialize a list of building components that the user will grow interactively.
-# This list will store component-specific hazards.
-building_component_dict={}
-
-# Load the master list of building components, from which a subset of user-specific building hazards is built,
-with open('master_building_component_database.json', 'r') as j:
-    master_building_component_dict = json.loads(j.read())
-
-for c in master_building_component_dict:
-    if yes_or_no("Does your building have " + master_building_component_dict[c]["sentence_start"] + " " + c + "?"):
-        building_component_dict[c]=master_building_component_dict[c]
-
-# Prompt the user to define the components of their building.  This list can be as long as needed.
-print("What are other key, major structural or system components of your building and property?\n")
-print("Enter as many as you like and don't forget about your building's surroundings.  (type 'done' when done)\n")
-
-while True:
-    token=input("->")
-    if token != "done":
-        building_component_dict[token]=[]  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
-    else:
-        break 
 #%%
 
 #Now prompt the user to consider the weather/climate impacts, on a componentwise basis.
