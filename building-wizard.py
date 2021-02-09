@@ -181,11 +181,11 @@ for key in hazard_list:
         future=data['rcp85_median']
         total=0
         num=0
-        for row in baseline:
-            if row[0] > 0:
-                if row[0] <= ((decade-1970)*31536000000):
-                    total+=row[1]
-                    num+=1
+        for row in future:
+            if row[0] >= ((decade-1970)*31536000000):
+                if row[0] <= ((decade+30-1970)*31536000000):
+                        total+=row[1]
+                        num+=1
         print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average median = " + str(round((total/num),1))))
         
         rcp85_range=data['rcp85_range']
