@@ -12,7 +12,23 @@ import webbrowser
 from textart import draw_stuff
 import requests
 from io import StringIO
-from numpy import mean
+import numpy as np
+from sklearn.neighbors import BallTree, KDTree
+
+import pandas as pd
+
+CRBCPI_data={"dT0p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT1p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT1p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT2p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT2p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT3p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             "dT3p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls")}
+
+#Set up nearest neighbour search on the sphere
+lat=np.deg2rad(CRBCPI_data["dT0p5"]["Latitude"].values)
+lon=np.deg2rad(CRBCPI_data["dT0p5"]["Longitude"].values)
+ball=BallTree(np.vstack((lat,lon)).swapaxes(1,0),metric="haversine")
 
 #SETUP FUCNTIONS
 
@@ -85,6 +101,9 @@ if not 41. <= latitude <= 84.:
     raise TypeError("Looks like your latitude is outside of Canada.  Can you re-check this?\n")
 if not -142. <= longitude <= -.52:
     raise TypeError("Looks like your longitude is outside of Canada.  Can you re-check this?\n")
+
+#find nearest CPI point (use CRBCPI_i to index climate data for this point, from CRBCPI data dictionary)
+distances,CRBCPI_i=ball.query(np.deg2rad([[latitude,longitude]]),k=1)
 
 elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
@@ -201,9 +220,9 @@ for key in hazard_list:
             
         print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 90th p average = " + str(round((total_high/num),1))))
         print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 10th p average = " + str(round((total_low/num),1))))
-        
+    elif master_hazard_dict[key]["resource"]=="CRBCPI":
+        print("TODO: display some CRBCPI data for "+str(CRBCPI_i))
     else:
-        #TODO: for at least CRBCPI, find nearest city from NBCC representative locations
         print ("\nClimateData.ca does not contain "+key.upper()+" data yet; however, I found this resource that I think might be of interest to you:")
         url=master_hazard_dict[key]["URL"]
     webbrowser.open(url,new=0,autoraise=False)

@@ -54,7 +54,7 @@
       "notes":""
    },   
    "extreme snow":{
-      "resource":"CRBCPI report",
+      "resource":"CRBCPI",
       "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
       "direction_statement": "Extreme snow accumulations over the winter season are likely to decrease in most areas of Canada, with the exception of the North.  Conversely, individual extreme mid-winter snowstorms may become more severe in many Canadian locations.",
       "direction_confidence": "",
@@ -63,7 +63,7 @@
       "notes":""
    },      
    "permafrost loss":{
-      "resource":"CRBCPI report",
+      "resource":"CRBCPI",
       "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost",
       "direction_statement": "Permafrost extent and thickness is expected to decrease with climate change.  Active layer depths will increase.",
       "direction_confidence": "",
@@ -72,7 +72,7 @@
       "notes":""
    },       
    "high winds":{
-      "resource":"CRBCPI report",
+      "resource":"CRBCPI",
       "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
       "direction_statement": "High wind events have the potential to become more severe with climate change in some Canadian locations.",
       "direction_confidence": "",
