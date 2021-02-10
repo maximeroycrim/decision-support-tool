@@ -6,12 +6,10 @@ tool for the climatedata.ca Building Module.
 """
 
 import json
-import csv
 from geopy.geocoders import Nominatim
 import webbrowser
 from textart import draw_stuff
 import requests
-from io import StringIO
 import numpy as np
 from sklearn.neighbors import BallTree, KDTree
 
@@ -72,15 +70,20 @@ draw_stuff('house')
 print("\n")
 
 building_type=input("What type of building are you designing, building, or operating?\n >")
-building_stage=input("What stage of the building process are you in? (design stage, construction stage, retrofit, etc.) \n >")
-construction_date=input("When was your "+building_type+" constructed or retrofitted? Or, if you're still in the design stage, what's the anticipated final year of construction? \n >")
+if yes_or_no("Is this an existing building?\n >"):
+    building_stage="existing"
+    construction_date=input("When was your "+building_type+" constructed?\n >")
+else:
+    building_stage=input("OK, so what stage of the building process are you in? (design stage, construction stage, retrofitting, etc.) \n >")
+    construction_date=input("And what's the anticipated final year of construction? \n >")
 design_life=input("What is your "+building_type+"'s intended design life (intended service life before an intervention is required (retrofit, modernize, demolish, etc.)?\n >")
 if int(design_life) < 20:
     raise TypeError("Looks like your "+building_type+"'s design life is pretty short!  If this is the case, you may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
 design_year=int(construction_date) + int(design_life)
 decade=int(round(design_year,-1))
 if decade > 2070:
-    print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
+    if decade > 2100:
+        print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
     decade=2070
     
 ## Get location
@@ -171,8 +174,13 @@ for key in hazard_list:
     draw_stuff(key)
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
-
-    
+    if master_hazard_dict[key]["type"]=="threshold":
+        if key=='extreme cold':
+            threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: -15 or -25)\n >")
+        if key=='extreme heat':
+            threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: 25, 27, 29, 30 or 32)\n >")
+        master_hazard_dict[key]["var"]=str(str(master_hazard_dict[key]["var"])+"_"+str(threshold))
+        master_hazard_dict[key]["var_en"]=str(str(master_hazard_dict[key]["var_en"])+" "+str(threshold)+" °C")
    
     if master_hazard_dict[key]["resource"]=="climatedata.ca":
         print ("\nI've found some data on ClimateData.ca that is related to "+key.upper()+". This data is for your location. I'll open the map in your web browser, and also summarize the recent past as well as a period that includes the "+str(decade)+"s, your building's estimated end-of-service-life:\n")
@@ -193,7 +201,7 @@ for key in hazard_list:
                 if row[0] <= ((2000-1970)*31536000000):
                     total+=row[1]
                     num+=1
-        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average median = " + str(round((total/num),1))))
+        print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average median = " + str(round((total/num),1))) + " " + master_hazard_dict[key]["units"])
         print("\n")
         print("Future period = "+str(decade+1)+"-"+str(decade+30)+", RCP8.5")
         
@@ -205,7 +213,7 @@ for key in hazard_list:
                 if row[0] <= ((decade+30-1970)*31536000000):
                         total+=row[1]
                         num+=1
-        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average median = " + str(round((total/num),1))))
+        print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average median = " + str(round((total/num),1))) + " " + master_hazard_dict[key]["units"])
         
         rcp85_range=data['rcp85_range']
         total_low=0
@@ -218,8 +226,8 @@ for key in hazard_list:
                     num+=1
                     total_high+=row[2]
             
-        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 90th p average = " + str(round((total_high/num),1))))
-        print("   "+str(master_hazard_dict[key]["var"]+" 30-yr average 10th p average = " + str(round((total_low/num),1))))
+        print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average 90th p average = " + str(round((total_high/num),1))) + " " + master_hazard_dict[key]["units"])
+        print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average 10th p average = " + str(round((total_low/num),1))) + " " + master_hazard_dict[key]["units"])
     elif master_hazard_dict[key]["resource"]=="CRBCPI":
         print("TODO: display some CRBCPI data for "+str(CRBCPI_i))
     else:
@@ -284,7 +292,7 @@ for component in building_component_dict:
     for h,v in hazard_dict.items():
         print(clear)
         print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".\n")
-        print(hazard_dict[h]["impact_statement"]+"  "+hazard_dict[h]["direction_statement"]+"/nReflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
+        print(hazard_dict[h]["direction_statement"]+"\nReflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
             per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
     print(clear)
