@@ -45,24 +45,53 @@ def yes_or_no(question):
 #%%
           
 #some interesting string that will clear console and return cursor to top left. Don't ask how it works!
-clear="\033[H\033[J"
+screen_clear="\033[H\033[J"
 
-print(clear)
-print("HAZZUH!")
+print(screen_clear)
+print("WELCOME TO CLIMATEDATA.CA's INTERACTIVE BUILDING SECTOR CLIMATE DECISION SUPPORT TOOL")
 print("\n")
+print("This interactive tool is designed for engineers, architects, planners, and other professionals in the buildings sector.\n")
+print("\nThe main goal is to gain a better sense of the workflow for using climate information within climate change risk and adaptation planning.")
+print("\nYou will be guided through the following 5 Steps:\n")
+print("   STEP 1 - Provide basic information about your building")
+print("   STEP 2 - Develop an inventory of building components and systems")
+print("   STEP 3 - Explore how climate change may impact local weather hazards")
+print("   STEP 4 - Identify the impacts weather hazards on building components and systems")
+print("   STEP 5 - Summary report and next steps")
 
-draw_stuff('wizard_start')
+print("\nImportante note: This tool does not replace the need for a full engineering assessment and climate risk analysis.")
+print("\nThis process should take around 20 minutes to complete.")
+input("Press Enter to begin...")
 
-print("\n")
-print("I am a decision support tool that will help you begin the process of integrating climate change information into your building!\n")
-print("This process should take around 20 minutes to complete.  At the end, I hope you will have some pointers to some relevant climate information.\n")
-print("You'll also have a better sense of the workflow for using climate information within climate change risk and adaptation planning!\n")
-print("Life is short!  Let's get going!")
-print("\n")
-input("Press Enter to continue...")
+#%%
+
+# GAUGE USER'S RISK TOLERANCE - suggested change: make this about training and guidance?
+# TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
+print(screen_clear)
+draw_stuff("books")
+print("\nCORE KNOWLEDGE CHECK-LIST\n")
+print("Before we begin, it is important that you are comfortable with certain definitions and concepts related to climate models and future climate data.")
+
+if yes_or_no("The amount of climate change we experience in the future depends on many factors, most notably future global emissions of greenhouse gases. Are you familiar with future climate scenarios, including the difference between RCP2.6, RCP4.5, and RCP8.5?\n >") is False:
+    print("Here is a very short video that will quickly bring you up to speed. It is hightly recommended that you watch it before conitnuing.")
+    url="https://climatedata.ca/resource/introduction-to-decision-making-using-climate-scenarios/"
+    webbrowser.open(url,new=2,autoraise=False)
+
+if yes_or_no("Climate data is best represented using a range of values, rather than a single number. Do you understand why this is the case?\n >") is False:
+    print("Here is a very short video explaining why users should look at a range of model projections, rather than focus on a single value. It is highly recommeded that you take the time to watch it.")
+    url="https://climatedata.ca/resource/understanding-ranges-in-climate-projections/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+if yes_or_no("Have you used ClimateData.ca before, and are comfortable with navigating the map?\n>") is False:
+    url="https://climatedata.ca/resource/how-to-navigate-variable-maps/"
+    webbrowser.open(url,new=2,autoraise=False)
+    
+print ("\nPLACEHODER: other training activities and leaning resources can be put here. In the web version, there could be a 'dont show me this again on startup' check-box.")
+input ("Press ENTER to continue...")
+#%%
 
 ### PIEVC Step 1: PROJECT DEFINITION ###
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 1: BASIC PROJECT DEFINITION")
 print("\n")
@@ -115,11 +144,11 @@ elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
 # TODO: hone initial component list and list-generating language, so that user is guided towards an appropriate level of depth
 
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 2: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
-print("Let's describe your building in some more detail!\n")
+print("Let's describe your building in some more detail.\n")
 print("I'll get you started with a few common building elements.  Then you can enter more afterwards.")
 
 # Initialize a list of building components that the user will grow interactively.
@@ -148,14 +177,14 @@ while True:
 #%%
 
 #NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZZARDS IN REGION
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 3: WEATHER HAZARDS AND CLIMATE DATA")
 print("\n")
-
-print("NEXT, LET'S DEVELOP SOME INFORMATION ABOUT PRESENT AND POSSIBLE FUTURE WEATHER HAZARDS IN YOUR AREA!\n")
-print("I'LL PROVIDE SOME STATEMENTS, AND YOU SIMPLY TELL ME IF ANY OF THESE HAZARDS ARE OF CONCERN TO YOU!\n")
 draw_stuff("clouds")
+print("\nNext, we need to identify the kinds of weather hazards your building's region is susceptible to.")
+print("\nYou will be asked whether a particular weather hazard occurs in your region. Using some very basic climate model projections, you will also be asked to consider whether a particular weather hazard can emerge as a growing issue in a changing climate.")
+print("\nYou do not need to be a climate scientist to correctly fill this section out - the goals are to identify likely hazards and to consider, at a very high level, the impacts of climate change.")
 print("\n")
 input("Press ENTER to continue...")
 # %%
@@ -170,7 +199,7 @@ with open('master_hazard_database.json', 'r') as j:
 #Dynamically generate a customized thazard_dict based on user prompts.
 hazard_list=["extreme rain","high winds","extreme heat","extreme cold","extreme snow","wildfire","river/lake flooding"]
 for key in hazard_list:
-    print(clear)
+    print(screen_clear)
     draw_stuff(key)
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
@@ -239,7 +268,7 @@ for key in hazard_list:
         hazard_dict[key]=master_hazard_dict[key] 
         
    
-print(clear)
+print(screen_clear)
 draw_stuff('sea level rise')       
 if yes_or_no("Is your region near the ocean?\n"): #Jer: not sure we need this hierarchy of questions for SLR.  Kind of redundant..?
     if elev > 50.:
@@ -259,12 +288,12 @@ if latitude > 55.: #This threshold was quickly set - should re-evaluate based on
     print(master_hazard_dict[key]["impact_statement"])
     if yes_or_no("Does any permafrost occur in your region?\n"):
         hazard_dict[key]=master_hazard_dict[key]
-    print(clear)
+    print(screen_clear)
 
 
 # %%
 # And allow for 'other' entries
-print(clear)
+print(screen_clear)
 token=[]
 if yes_or_no("Any other weather hazards you want to tell me about before we continue?\n"):
     print("Please enter these hazards below (or type 'done' if you are done)")
@@ -280,7 +309,7 @@ if yes_or_no("Any other weather hazards you want to tell me about before we cont
 
 #Now prompt the user to consider the weather/climate impacts, on a componentwise basis.
 ##Provide some standard hazards, and then prompt user to add more if needed
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 4: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
@@ -290,12 +319,12 @@ input("Press Enter to continue...")
 for component in building_component_dict:
     per_component_hazard_dict={}
     for h,v in hazard_dict.items():
-        print(clear)
+        print(screen_clear)
         print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".\n")
         print(hazard_dict[h]["direction_statement"]+"\nReflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
             per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
-    print(clear)
+    print(screen_clear)
     if per_component_hazard_dict != []:
         print("You've identified a number of hazards that could impact your building's "+component+".\n")
         print("For each hazard, identify from 1-10, how concerned you are about impacts to the "+component+".\n")
@@ -305,12 +334,12 @@ for component in building_component_dict:
         for k,v in per_component_hazard_dict.items():
             per_component_hazard_dict[k]=int(input(k+" (1-10):"))
     
-    print(clear)    
+    print(screen_clear)    
     building_component_dict[component]=per_component_hazard_dict
 
 # %% 
 # TODO: refactor following code to account for change above (now, each component dictionary entry is assigned a dictionary not a list)
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 5: SUMMARY REPORT")
 print("\n")
@@ -363,7 +392,7 @@ for h in range(max_len):
 print("\nIt might make sense to focus most on these hazards during your climate change risk assessment climate data gathering.\n")
 '''
 input ("Press ENTER to continue")
-print (clear)
+print (screen_clear)
 
 '''
 print("I've identified some available climate data resources, specific to the hazards that you indicated your building may be (or become) vulnerable to!")
@@ -376,7 +405,7 @@ for h,r in l_sorted:
 #TODO: allow for multiple resource URLs
 #TODO: Improve this closing guidance.
 
-print(clear)
+print(screen_clear)
 print("\n")
 print("STEP 6: NEXT STEPS")
 print("\n")
@@ -394,37 +423,14 @@ input("7) Undertake risk assessments for present and future conditions to unders
 input("8) If any risk profiles risk to unacceptable levels due to climate change, consider developing risk reduction (adaptation) actions! (ENTER to continue)\n")
 
 # %%
-# GAUGE USER'S RISK TOLERANCE - suggested change: make this about training and guidance?
-# TODO - improve this langauge and approach to describing future uncertainty in terms of risk.
-print(clear)
-draw_stuff("books")
 
-print ("UNLIKE HISTORICAL CLIMATE NORMALS, FUTURE CLIMATE CONDITIONS CAN'T BE BOILED DOWN TO A SINGLE NUMBER.")
-print ("IN FACT, THE FUTURE IS FAR FROM CERTAIN. THE AMOUNT OF FUTURE CLIMATE CHANGE ONE NEEDS TO PLAN FOR DEPENDS LARGELY ON FUTURE GREENHOUSE EMISSIONS.")
-print ("\n")
-print ("YOU COULD ALWAYS 'PLAN FOR THE WORST AND HOPE FOR THE BEST,' BUT IT ISN'T ALWAYS FINANCIALLY POSSIBLE TO PLAN FOR ALL POSSIBLE FUTURE HAZARDS.")
-print ("\n")
-print ("BEGIN PRE-FLIGHT CHECK LIST:")
-print ("\n")
-if yes_or_no("Have you watched our short training video on future climate scenarios?\n >") is False:
-    print("OK, I'll wait here while you go watch that video. It won't take long.")
-    url="https://climatedata.ca/resource/introduction-to-decision-making-using-climate-scenarios/"
-    webbrowser.open(url,new=2,autoraise=False)
-
-if yes_or_no("Have you watched our short training video on understanding ranges in climate projections?\n >") is False:
-    url="https://climatedata.ca/resource/understanding-ranges-in-climate-projections/"
-    webbrowser.open(url,new=2,autoraise=False)
-    
-if yes_or_no("Have you used ClimateData.ca before, and are comfortable with navigating the map?\n>") is False:
-    url="https://climatedata.ca/resource/how-to-navigate-variable-maps/"
-    webbrowser.open(url,new=2,autoraise=False)
     
 print("\n")
 print("Well done, and good luck with using this climate information and training to increase your building's resilience to climate change!")
 email_address=input("Enter your email address to receive a brief report that summarizes the results of this decision support tool!")
 input("When you're ready to say goodbye to me, press ENTER!")
 
-
+print(screen_clear)
 draw_stuff('wizard_end')
 print ("POOF! ALL DONE")
 
