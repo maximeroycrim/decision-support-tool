@@ -11,24 +11,34 @@ import webbrowser
 from textart import draw_stuff
 import requests
 import numpy as np
-from sklearn.neighbors import BallTree, KDTree
-
+from sklearn.neighbors import BallTree
 import pandas as pd
 
-CRBCPI_data={"dT0p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
-             "dT1p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+1.0C_NBCC.xls"),
-             "dT1p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+1.5C_NBCC.xls"),
-             "dT2p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+2.0C_NBCC.xls"),
-             "dT2p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+2.5C_NBCC.xls"),
-             "dT3p0":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+3.0C_NBCC.xls"),
-             "dT3p5":pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+3.5C_NBCC.xls")}
+dT_levels=['+0.5C','+1.0C','+1.5C','+2.0C','+2.5C','+3.0C','+3.5C']
+
+CRBCPI_data={dT_levels[0]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
+             dT_levels[1]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+1.0C_NBCC.xls"),
+             dT_levels[2]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+1.5C_NBCC.xls"),
+             dT_levels[3]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+2.0C_NBCC.xls"),
+             dT_levels[4]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+2.5C_NBCC.xls"),
+             dT_levels[5]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+3.0C_NBCC.xls"),
+             dT_levels[6]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+3.5C_NBCC.xls")}
+
+CRBCPI_dT_to_time=pd.DataFrame([[2023,2023,2023,2023],
+                                [2035,2046,2046,np.nan],
+                                [2047,2070,2070,np.nan],
+                                [2059,2087,np.nan,np.nan],
+                                [2069,np.nan,np.nan,np.nan],
+                                [2080,np.nan,np.nan,np.nan],
+                                [2090,np.nan,np.nan,np.nan]],
+                                index=dT_levels,columns=['RCP8.5','RCP6.0','RCP4.5','RCP2.6'])
 
 #Set up nearest neighbour search on the sphere
-lat=np.deg2rad(CRBCPI_data["dT0p5"]["Latitude"].values)
-lon=np.deg2rad(CRBCPI_data["dT0p5"]["Longitude"].values)
+lat=np.deg2rad(CRBCPI_data["+0.5C"]["Latitude"].values)
+lon=np.deg2rad(CRBCPI_data["+0.5C"]["Longitude"].values)
 ball=BallTree(np.vstack((lat,lon)).swapaxes(1,0),metric="haversine")
 
-#SETUP FUCNTIONS
+#SETUP FUNCTIONS
 
 # Quick function to error-catch non-standard y/n responses
 def yes_or_no(question):
@@ -39,6 +49,8 @@ def yes_or_no(question):
                 return True
             if reply[0] == 'n':
                 return False
+            else:
+                print("Whoops - please enter 'y' or 'n'.")
 
 
 
@@ -51,7 +63,10 @@ print(screen_clear)
 print("WELCOME TO CLIMATEDATA.CA's INTERACTIVE BUILDING SECTOR CLIMATE DECISION SUPPORT TOOL")
 print("\n")
 print("This interactive tool is designed for engineers, architects, planners, and other professionals in the buildings sector.\n")
-print("\nThe main goal is to gain a better sense of the workflow for using climate information within climate change risk and adaptation planning.")
+print("\nThe tool has two main goals:\n")
+print("   GOAL 1 - Gain a better sense of how to select useful climate change information for biulding-specific climate change risk assessments\n")
+print("   GOAL 2 - Help find some  useful climate change information for your building\n")
+input("Press Enter to continue...")
 print("\nYou will be guided through the following 5 Steps:\n")
 print("   STEP 1 - Provide basic information about your building")
 print("   STEP 2 - Develop an inventory of building components and systems")
@@ -59,7 +74,9 @@ print("   STEP 3 - Explore how climate change may impact local weather hazards")
 print("   STEP 4 - Identify the impacts weather hazards on building components and systems")
 print("   STEP 5 - Summary report and next steps")
 
-print("\nImportante note: This tool does not replace the need for a full engineering assessment and climate risk analysis.")
+print("\nImportant note: This tool helps you select and source relevant climate change information for your building's climate change risk assessment.")
+print("However, it cannot undertake the full risk analysis or identify climate adaptation options for your building.\n")
+print("At the end of this tool's process, you will be provided with some important next steps to consider.")
 print("\nThis process should take around 20 minutes to complete.")
 input("Press Enter to begin...")
 
@@ -135,7 +152,8 @@ if not -142. <= longitude <= -.52:
     raise TypeError("Looks like your longitude is outside of Canada.  Can you re-check this?\n")
 
 #find nearest CPI point (use CRBCPI_i to index climate data for this point, from CRBCPI data dictionary)
-distances,CRBCPI_i=ball.query(np.deg2rad([[latitude,longitude]]),k=1)
+CRBCPI_distance,CRBCPI_i=ball.query(np.deg2rad([[latitude,longitude]]),k=1)
+CRBCPI_i=CRBCPI_i[0][0]
 
 elev=float(input("How far above sea level is your building (in meters)? \n >"))
 
@@ -258,15 +276,32 @@ for key in hazard_list:
         print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average 90th p average = " + str(round((total_high/num),1))) + " " + master_hazard_dict[key]["units"])
         print("   "+str(master_hazard_dict[key]["var_en"]+": 30-yr average 10th p average = " + str(round((total_low/num),1))) + " " + master_hazard_dict[key]["units"])
     elif master_hazard_dict[key]["resource"]=="CRBCPI":
-        print("TODO: display some CRBCPI data for "+str(CRBCPI_i))
-    else:
-        print ("\nClimateData.ca does not contain "+key.upper()+" data yet; however, I found this resource that I think might be of interest to you:")
         url=master_hazard_dict[key]["URL"]
+        location=CRBCPI_data["+0.5C"]["Location"][np.squeeze(CRBCPI_i)]
+        proximity="{x:.0f}".format(x=np.squeeze(CRBCPI_distance)*6378.) # convert distance from radians to kilometers, format for rounded-value printing
+        
+        # Convert from dT-based scaling to scenario/year scaling using interpolation in time.
+        x=CRBCPI_dT_to_time['RCP8.5'] 
+        var=master_hazard_dict[key]["var"]
+        y=[]
+        for dT in dT_levels:
+            y.append(CRBCPI_data[dT][var+"_"+dT][CRBCPI_i])
+        dv=np.interp(decade,x,y)
+        dv="{x:.1f}".format(x=dv)
+        
+        print("\nI've found some data from the Government of Canada Climate-Resilient Buildings and Core Public Infrastructure (RCBCPI) for changes to "+key.upper()+".")
+        print("Specifically, I think you may be interested in changes in "+master_hazard_dict[key]["var_en"]+", in "+location+", around "+proximity+" km from you.\n")
+        print("Under the RCP8.5 scenario, "+master_hazard_dict[key]["var_en"]+" may increase by around "+dv+master_hazard_dict[key]["units"]+".")
+        print("Please carefully judge yourself whether this location is similar enough to your building's site, for this information to be useful!")
+        
+    else:
+        print ("\nFor, "+key.upper()+" I found this resource that I think might be of interest to you:")
+        url=master_hazard_dict[key]["URL"]
+    
     webbrowser.open(url,new=0,autoraise=False)
     
     if yes_or_no("Based on what you see, and without worrying about being too precise at this point in the process, could your region be prone to "+key.upper()+", either now or in the future?\n"):
         hazard_dict[key]=master_hazard_dict[key] 
-        
    
 print(screen_clear)
 draw_stuff('sea level rise')       
