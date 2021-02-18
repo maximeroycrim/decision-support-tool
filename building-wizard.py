@@ -264,13 +264,25 @@ for key in hazard_list:
     print(key.upper())
     print(master_hazard_dict[key]["impact_statement"])
     if master_hazard_dict[key]["type"]=="threshold":
-        if key=='extreme cold':
-            threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: -15 or -25)\n >")
-        if key=='extreme heat':
-            threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: 25, 27, 29, 30 or 32)\n >")
-        master_hazard_dict[key]["var"]=str(str(master_hazard_dict[key]["var"])+"_"+str(threshold))
-        master_hazard_dict[key]["var_en"]=str(str(master_hazard_dict[key]["var_en"])+" "+str(threshold)+" °C")
-   
+
+        while True:      
+            if key=='extreme cold':
+                options=[-15,-25]
+                threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: -15 or -25)\n >")
+            if key=='extreme heat':
+                options=[25, 27, 29, 30, 32]
+                threshold=input("\nWhat temperature threshold should I use for "+key+" days, in your experience?\n(Choose one: 25, 27, 29, 30, or 32)\n >")
+            if threshold.strip('-').isnumeric():
+                threshold=int(threshold)
+                if threshold in options:
+                    master_hazard_dict[key]["var"]=str(str(master_hazard_dict[key]["var"])+"_"+str(threshold))
+                    master_hazard_dict[key]["var_en"]=str(str(master_hazard_dict[key]["var_en"])+" "+str(threshold)+" °C")
+                    break
+                else:
+                    print("Whoops - please enter a valid temperature threshold")  
+            else:
+                print("Whoops - please enter a valid temperature threshold")        
+        
     if master_hazard_dict[key]["resource"]=="climatedata.ca":
         print ("\nI've found some data on ClimateData.ca that is related to "+key.upper()+". This data is for your location. I'll open the map in your web browser, and also summarize the recent past as well as a period that includes the "+str(decade)+"s, your building's estimated end-of-service-life:\n")
         #url containing map; note this is kinda annoying... need to find a less pop-up approach if possible
