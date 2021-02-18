@@ -1,18 +1,67 @@
 {
-   "air conditioner":{
+   "Foundation and basement":{
       "sentence_start":"an",
       "description":"",
-      "possible_hazards":["extreme rain","extreme snow","high winds"]
-      
-   },
-   "flat roof":{
+      "possible_hazards":[]
+   },  
+   "Roof":{
       "sentence_start":"a",
       "description":"",
-      "possible_hazards":["high winds"]
+      "possible_hazards":[]
       },
-   "wood framing":{
-      "sentence_start":"",
+   "Exterior walls":{
+      "sentence_start":"a",
       "description":"",
-      "possible_hazards":["sea level rise","river/lake flooding"]
-   }  
+      "possible_hazards":[]
+      },
+   "Windows":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },
+   "Interior":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },     
+   "Plumbing (water distribution)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      }, 
+   "Plumbing (wastewater)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      }, 
+   "Plumbing (storm drainage)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },    
+   "HVAC (heating systems)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },
+   "HVAC (cooling systems)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },
+   "Electrical service and distribution":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },           
+   "Surroundings (natural environment)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      },        
+   "Surroundings (built environment)":{
+      "sentence_start":"a",
+      "description":"",
+      "possible_hazards":[]
+      }        
 }
