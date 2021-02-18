@@ -8,6 +8,7 @@ from sklearn.neighbors import BallTree
 import pandas as pd
 from collections import Counter
 
+
 dT_levels=['+0.5C','+1.0C','+1.5C','+2.0C','+2.5C','+3.0C','+3.5C']
 
 CRBCPI_data={dT_levels[0]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
@@ -40,6 +41,8 @@ def yes_or_no(question):
                 return False
             else:
                 print("Whoops - please enter 'y' or 'n'.")
+
+
 
 #%%
           
@@ -125,11 +128,16 @@ else:
 
 #TODO: see if possible to auto-specify standard design lives from NBCC or CSA S478 Building Durability
 
-print("What is your "+building_type+"'s intended design life in years (intended service life before a major intervention is required (retrofit, modernize, demolish, etc.)?")
-if yes_or_no("If you're unsure of your building's design lives, you can find a description of standard building design lives in CSA S478.  Would you like to see this?") is True:
+print("\nWhat is your "+building_type+"'s intended design life in years (intended service life before a major intervention is required (retrofit, modernize, demolish, etc.)?")
+print("\nType 'help' if you are unsure how to determine your building's approximately design life.")
+design_life=input(">")
+while design_life=='help':
+    print("You can find a description of standard building design lives in CSA S478. I'll open that resource for you now.")
     url="https://www.csagroup.org/store/product/CSA%20S478%3A19/?gclid=CjwKCAiAmrOBBhA0EiwArn3mfGwIl8Ll8Oa0BkkEPJgzrITQ8GeDn3M1tHu4inRLTxvgtjy3DHzkfRoCfeMQAvD_BwE"
     webbrowser.open(url,new=2,autoraise=False)
-design_life=input(">")
+    print("\nWhat is your "+building_type+"'s intended design life in years (intended service life before a major intervention is required (retrofit, modernize, demolish, etc.)?")
+    print("\nType 'help' if you are unsure how to determine your building's approximately design life.")
+    design_life=input(">")
 design_year=int(construction_date) + int(design_life)
 decade=int(round(design_year,-1))
 if decade <2030:
@@ -140,19 +148,20 @@ if decade > 2070:
         print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
     decade=2070
     
+
 ## Get location
 
-if yes_or_no("Type YES if you would like me to look up your location from your address, or type NO if you want to enter your location manually \n >"):
-    geolocator = Nominatim(user_agent="example")
-    loc_address=str(input("Location of building site (full or partial address)? \n >"))
-    location = geolocator.geocode(loc_address)
-    latitude = location.latitude
-    longitude = location.longitude  
-    print("Your latitude is..." + str(latitude))
-    print("Your longitude is..." + str(longitude))
-else:
-    latitude=float(input("Enter your Latitude (in decimals): \n >"))
-    longitude=float(input("Enter your Longitude (in negative degrees west, in decimals): \n >"))
+#if yes_or_no("Would you like me to look up your location from your latitude and longitude for you?\n >"):
+geolocator = Nominatim(user_agent="example")
+loc_address=str(input("Location of building site (full or partial address)? \n >"))
+location = geolocator.geocode(loc_address)
+latitude = location.latitude
+longitude = location.longitude  
+
+
+#else:
+#    latitude=float(input("Enter your Latitude (in decimals): \n >"))
+#    longitude=float(input("Enter your Longitude (in negative degrees west, in decimals): \n >"))
 
 if not 41. <= latitude <= 84.:
     raise TypeError("Looks like your latitude is outside of Canada.  Can you re-check this?\n")
@@ -167,7 +176,24 @@ ball=BallTree(np.vstack((lat,lon)).swapaxes(1,0),metric="haversine")
 CRBCPI_distance,CRBCPI_i=ball.query(np.deg2rad([[latitude,longitude]]),k=1)
 CRBCPI_i=CRBCPI_i[0][0]
 
-elev=float(input("How far above sea level is your building (in meters)? \n >"))
+
+print("Your latitude is..." + str(latitude))
+print("Your longitude is..." + str(longitude))
+
+elev=float(input("\nHow far above sea level is your building (in meters)? \n >"))
+
+## User's profession
+professions=['Engineer','Architect','Owner/operator','Regulator','OTHER']
+print("\nAnd finally, which of the following best describes your profession?\n")
+counter=1
+for p in professions:
+    print("  " + str(counter) + ". " + p)
+    counter+=1
+userprof=input("Enter a number from 1 to " + str(counter-1) + " >")
+users_profession=professions[int(userprof)-1]
+if users_profession == "OTHER":
+    users_profession=input("Please type in your profession >")
+
 
 # %%
 ### PIEVC Step 2: DATA GATHERING ###
@@ -179,9 +205,9 @@ print("\n")
 print("STEP 2: INVENTORY OF BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 print("Understanding climate change impacts to your building requires first developing a high-level catalog of your building's systems and components.")
-print("We'll use this catalog to assess how climate change could impact important aspects of your building in different ways.")
-print("Please enter 'yes' for all the building systems you'd like to consider in this assessment (note, you'll need about 2 minutes of thinking per component, later in the process):")
-
+print("\nWe'll use this catalog to assess how climate change could impact important aspects of your building in different ways.")
+print("\nAnswer 'yes' to include any of the following Level 1 Major Group Elements in the analysis.")
+print("\nYou will then be asked to identify Level 2 Components you wish to include in the analysis. Note, you'll need about 2 minutes of thinking per component, later in the process: ")
 
 # Initialize a list of building components that the user will grow interactively.
 # This list will store component-specific hazards.
@@ -192,11 +218,13 @@ with open('master_building_component_database.json', 'r') as j:
     master_building_component_dict = json.loads(j.read())
 
 for c in master_building_component_dict:
-    if yes_or_no(c):
-        building_component_dict[c]=master_building_component_dict[c]
+    if yes_or_no(c + " - " + master_building_component_dict[c]["description"]):
+        for g in master_building_component_dict[c]["group"]:
+            if yes_or_no("   " + g):
+                building_component_dict[g]=g #master_building_component_dict[c][g]
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
-print("Are there any other key, major structural or system components of your building and property that you'd like to include?\n")
+print("\nAre there any other key, major structural or system components of your building and property that you'd like to include?\n")
 print("For this exercise, let's try to keep to a high level here (12-15 components, maximum!).   Type 'done' when done.\n")
 
 while True:
@@ -305,7 +333,11 @@ for key in hazard_list:
         dv="{x:.1f}".format(x=dv)
         print("\nI've found some data from the Government of Canada Climate-Resilient Buildings and Core Public Infrastructure (RCBCPI) for changes to "+key.upper()+".")
         print("Specifically, I think you may be interested in changes in "+master_hazard_dict[key]["var_en"]+", in "+location+", around "+proximity+" km from you.\n")
-        print("Under the RCP8.5 scenario, "+master_hazard_dict[key]["var_en"]+" may change by around "+dv+master_hazard_dict[key]["units"]+".\n")
+        if float(dv) >= 0:
+            direction_statement="increase"
+        else:
+            direction_statement="decrease"
+        print("Under the RCP8.5 scenario, "+master_hazard_dict[key]["var_en"]+" may "+direction_statement+" by around "+dv+master_hazard_dict[key]["units"]+".\n")
         print("Please carefully judge yourself whether this location is similar enough to your building's site, for this information to be useful!")  
     else:
         print ("\nFor, "+key.upper()+" I found this resource that I think might be of interest to you:")
@@ -374,8 +406,8 @@ for component in building_component_dict:
             per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
     print(screen_clear)
     if per_component_hazard_dict != []:
-        print("You've identified a number of hazards that could impact your building's "+component+".\n")
-        print("For each hazard, identify from 1-10, how concerned you are about impacts to the "+component+".\n")
+        #print("You've identified a number of hazards that could impact your building's "+component+".\n")
+        print("Please identify from 1-10, how concerned you are about impacts to the "+component+".\n")
         print("\nUse the following qualitative scale:\n")
         print("    <1----------------------------------------------------------------10>")
         print("not very concerned                                           extremely concerned\n")
@@ -426,7 +458,7 @@ sortrank=sorted(ranks, reverse=True)
 # %%
 
 print ("\n")
-print("Based on your entries, I have attempted to rank your building's components from MOST to LEAST vulnerable:\n")
+print("\nBased on your entries, I have attempted to rank your building's components from MOST to LEAST vulnerable:\n")
 j=0
 for i in range(len(sortrank)):
     if i+j < len(sortrank):

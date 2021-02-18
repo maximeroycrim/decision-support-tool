@@ -1,67 +1,26 @@
 {
-   "Foundation and basement":{
+   "SUBSTRUCTURE":{
       "sentence_start":"an",
-      "description":"",
+      "description":"Includes foundations and basements",
+      "group":["foundations","basements"],
       "possible_hazards":[]
    },  
-   "Roof":{
+   "SHELL":{
       "sentence_start":"a",
-      "description":"",
+      "description":"Includes superstructure, exterior closures, and roofing",
+      "group":["superstructure (floor and roof)","exterior closures (exterior wall, windows, doors)","roofing (coverings and openings"],
       "possible_hazards":[]
       },
-   "Exterior walls":{
+   "INTERIORS":{
       "sentence_start":"a",
-      "description":"",
+      "description":"Includes doors, partitions, staircases and wall finishes",
+      "group":["Doors and partitions","staircases","interior finishes (wall, floor and ceiling finishes)"],
       "possible_hazards":[]
       },
-   "Windows":{
+   "SERVICES":{
       "sentence_start":"a",
-      "description":"",
+      "description":"Includes elevators, plumbing, HVAC, fire protection, and electrical",
+      "group":["conveying systems (e.g. elevators)","Plumbing (water supply, sewage, drainage, etc.)","Mechnical heating systems","Mechanical cooling systems","Additional/specialized HVAC systems","Fire protection (includes sprinklers and hoses)","Electrical (includes service and distribution, lighting and communications."],
       "possible_hazards":[]
-      },
-   "Interior":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },     
-   "Plumbing (water distribution)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      }, 
-   "Plumbing (wastewater)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      }, 
-   "Plumbing (storm drainage)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },    
-   "HVAC (heating systems)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },
-   "HVAC (cooling systems)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },
-   "Electrical service and distribution":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },           
-   "Surroundings (natural environment)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      },        
-   "Surroundings (built environment)":{
-      "sentence_start":"a",
-      "description":"",
-      "possible_hazards":[]
-      }        
+      }
 }
