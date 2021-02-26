@@ -224,7 +224,7 @@ for c in master_building_component_dict:
                 building_component_dict[g]=g #master_building_component_dict[c][g]
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
-print("\nAre there any other h, major structural or system components of your building and property that you'd like to include?\n")
+print("\nAre there any other major structural or system components of your building and property that you'd like to include?\n")
 print("For this exercise, let's try to keep to a high level here (12-15 components, maximum!).   Type 'done' when done.\n")
 
 while True:
@@ -296,14 +296,15 @@ for h in hazard_list:
         time = np.array([i[0] for i in data['modeled_historical_median']])/31536000000.
         val = np.array([i[1] for i in data['modeled_historical_median']])
         baseline_mean=np.mean(val[time<=2000-1970])
-        
         time = np.array([i[0] for i in data['rcp85_median']])/31536000000.
         val = np.array([i[1] for i in data['rcp85_median']])
         future_mean=np.mean(val[(decade-1970<=time) & (time<=decade+30-1970)])
         
-        print("\nI've found some information from climatedata.ca for "+h.upper()+ " at your location, specifically, "+master_hazard_dict[h]["var_en"]+".")
-        print(master_hazard_dict[h]["var_en"]+" has been around "+str(round((baseline_mean),0)) + " " + master_hazard_dict[h]["units"]+", in recent years at your location.")
-        print("This looks set to change to "+str(round((future_mean),0)) + " " + master_hazard_dict[h]["units"]+", by the end of your building's design life, for a high-end climate change scenario (RCP8.5).")
+        print("\nI've found some information from climatedata.ca for "+h.upper()+ " at your location")
+        print("\n                         "+master_hazard_dict[h]["var_en"])
+        print("------------------------------------------------------------------")
+        print("\t1970-2000 Baseline\t"+str(decade)+"-"+str(decade+30)+" Future (RCP8.5)")
+        print("\t" + str(round((baseline_mean),0)) + " " + master_hazard_dict[h]["units"]+"         \t"+str(round((future_mean),0)) + " " + master_hazard_dict[h]["units"]+" (a change of " + str(round(((future_mean-baseline_mean)/baseline_mean*100),0))+"%)")
         
     elif master_hazard_dict[h]["resource"]=="CRBCPI":
         #TODO: get updated historical info, so we can report absolute change (and not just delta)

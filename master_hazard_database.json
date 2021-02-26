@@ -38,7 +38,7 @@
    "extreme heat":{
       "resource":"climatedata.ca",
       "type": "threshold",
-      "units": "days per year",
+      "units": "days",
       "URL":"https://climatedata.ca/variable/tx_max/",
       "var":"txgt",
       "var_en":"Days above",
@@ -53,7 +53,7 @@
    "extreme cold":{
       "resource":"climatedata.ca",
       "type": "threshold",
-      "units": "days per year",
+      "units": "days",
       "URL":"https://climatedata.ca/variable/tx_min/",
       "var":"tnlt",
       "var_en":"Days below",
