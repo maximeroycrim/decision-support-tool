@@ -268,7 +268,7 @@ with open('master_hazard_database.json', 'r') as j:
     master_hazard_dict = json.loads(j.read())
 
 #Dynamically generate a customized hazard_dict based on user prompts.
-hazard_list=["extreme rain","high winds","extreme heat","extreme cold","extreme snow","wildfire","river/lake flooding"]
+hazard_list=["extreme rain","high winds","extreme heat","extreme cold","extreme snow","wildfire","river/lake flooding"] #TODO: get this from JSON file
 for h in hazard_list:
     print(screen_clear)
     draw_stuff(h)
@@ -499,7 +499,7 @@ print("Based on the hazards that you identified as important to your building co
 for h,r in l_sorted:
     if hazard_dict[h]["resource"]=="climatedata.ca":
         print("\nI've found some "+master_hazard_dict[h]["var_en"]+" information on ClimateData.ca for "+h.upper()+" at your location.")
-        if yes_or_no("Would you like me to open a map in your web browser, where you can read more about "+master_hazard_dict[h]["var_en"]+ " and download data for your location for different future scenarios?"):
+        if yes_or_no("Would you like me to open a map in your web browser, where you can read more about "+master_hazard_dict[h]["var_en"]+ " and access data for your location for different future scenarios?"):
             url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
             webbrowser.open(url,new=0,autoraise=False)
     if hazard_dict[h]["resource"]=="CRBCPI":
