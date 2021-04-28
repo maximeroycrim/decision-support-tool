@@ -53,7 +53,7 @@ print("WELCOME TO CLIMATEDATA.CA's INTERACTIVE BUILDING SECTOR CLIMATE DECISION 
 print("\n")
 print("This interactive tool is designed for engineers, architects, planners, and other professionals in the buildings sector.\n")
 print("\nThe tool has two main goals:\n")
-print("   GOAL 1 - Gain a better sense of how to select useful climate change information for biulding-specific climate change risk assessments")
+print("   GOAL 1 - Gain a better sense of how to select useful climate change information for building-specific climate change considerations, including risk assessments and long term planning.")
 print("   GOAL 2 - Help find some  useful climate change information for your building")
 print("\n")
 print("You will be guided through the following 5 Steps:\n")
@@ -62,11 +62,19 @@ print("   STEP 2 - Develop an inventory of building components and systems")
 print("   STEP 3 - Identify the local weather and climate hazards that may matter for your building")
 print("   STEP 4 - Explore the impacts of weather and climate hazards on building components and systems")
 print("   STEP 5 - Summary report and next steps")
-
-print("\nThis tool helps you select and source relevant climate change information for your building's climate change risk assessment.")
-print("However, it cannot undertake a full risk analysis or identify climate adaptation options for your building.")
-print("At the end of this tool's process, you will receive some important next risk assessment and adaptation planning steps to consider.\n")
+print("\nThis tool helps you select and source relevant climate change information for your building planning process.")
+print("At the end of this tool's process, you will receive some important next steps to consider.\n")
 print("\nThis process should take around 20 minutes to complete.")
+input("Press Enter to continue...")
+
+print(screen_clear)
+
+print("CLIMATE DECISION SUPPORT TOOL DISCLAIMER AND RELEASE OF LIABILITY")
+print('This tool supports users in learning how to identify a subset of appropriate climate change information for building planning.  However, it is not an offical engineering design tool.  Users of this tool accept full responsibilty for expert judgement and professional standard of care in applying this and other climate change information to detailed project planning and engineering.  The authors of this tool accept no responsibilty for damage resulting from misuse of the datasets provided by this tool during project planning or execution.')
+print('This tool endeavours to summarize a selection of important building hazards and describe changes to these hazards resulting from climate change.  However, some hazards do not have reliable future information available, to the best knowledge of the authors of this tool, at this time.  The authors take no responsibility for negligent omission of consideration of such hazards in project planning or execution.')
+print('This tool is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and non infringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the tool.')
+print("")
+print('In short, please combine the use of this tool with personal judgement, and full acceptance of liability and professional standard of care.')
 input("Press Enter to begin...")
 
 #%%
@@ -122,6 +130,10 @@ building_type=input(">")
 if yes_or_no("Is this an existing building?\n >"):
     building_stage="existing"
     construction_date=input("When was your "+building_type+" constructed?\n >")
+    if int(construction_date) < 2000:
+        old_construction=True
+        #TODO: based on old_construction flag, add a comment in final report generator.
+        print("It looks like your building is at least 20 years old already!  Climate has changed significantly since then - you should assess whether your building is already at risk from change climate conditions!")
 else:
     building_stage=input("OK, so what stage of the building process are you in? (design stage, construction stage, retrofitting, etc.) \n >")
     construction_date=input("And what's the anticipated final year of construction? \n >")
@@ -148,7 +160,7 @@ if decade > 2070:
         print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
     decade=2070
     
-
+# %%
 ## Get location
 
 #if yes_or_no("Would you like me to look up your location from your latitude and longitude for you?\n >"):
@@ -247,7 +259,6 @@ print("\nYou will be asked whether a particular weather hazard occurs in your re
 print("\nYou do not need to be a climate scientist to correctly fill this section out - the goals are to identify likely hazards and to consider, at a very high level, the impacts of climate change.")
 print("\n")
 input("Press ENTER to continue...")
-# %%
 
 # Initialize a blank list of weather hazards that the user will grow following a series of y/n questions:
 hazard_dict={}
@@ -299,7 +310,11 @@ for h in hazard_list:
         time = np.array([i[0] for i in data['rcp85_median']])/31536000000.
         val = np.array([i[1] for i in data['rcp85_median']])
         future_mean=np.mean(val[(decade-1970<=time) & (time<=decade+30-1970)])
-        
+        dv=future_mean-baseline_mean
+        if float(dv) >= 0:
+            direction_statement="increase"
+        else:
+            direction_statement="decrease"    
         print("\nI've found some information from climatedata.ca for "+h.upper()+ " at your location")
         print("\n                         "+master_hazard_dict[h]["var_en"])
         print("------------------------------------------------------------------")
@@ -320,14 +335,16 @@ for h in hazard_list:
             y.append(CRBCPI_data[dT][var+"_"+dT][CRBCPI_i])
         dv=np.interp(decade,x,y) 
         #TODO: consider if we can change the decade value - CRBCPI data can go with shorter climatological periods. 
-        dv="{x:.1f}".format(x=dv)
+        dv="{x:.0f}".format(x=dv)
         print("\nI've found some information from the Climate-Resilient Buildings and Core Public Infrastructure (RCBCPI) project for "+h.upper()+" near your location, specifically, "+master_hazard_dict[h]["var_en"]+".")
         print("This information is from "+location+", around "+proximity+"km from your building site.\n")
         if float(dv) >= 0:
             direction_statement="increase"
         else:
             direction_statement="decrease"            
-        print(master_hazard_dict[h]["var_en"]+" looks set to "+direction_statement+" by around "+dv+master_hazard_dict[h]["units"]+", by the end of your building's design life, for a high-end climate change scenario (RCP8.5).")
+        print(master_hazard_dict[h]["var_en"]+" looks set to "+direction_statement+" (for example, by around "+dv+master_hazard_dict[h]["units"]+", by the end of your building's design life, for the high-end RCP 8.5 climate change scenario).")
+        print(master_hazard_dict[h]["direction_confidence"])
+        print(master_hazard_dict[h]["magnitude_confidence"])
     else:
         print("")
     if yes_or_no("Based on this general information, and considering your region's and building's possible vulnerabilities to "+h.upper()+" now or in the future, should I include "+h.upper()+" in this assessment?\n"):
@@ -378,39 +395,46 @@ print("\n")
 print("STEP 4: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
 print("\n")
 
-print("Now, let's consider the climate hazards you identified in the context of each of your building's components!\n")
+print("Now, let's consider the interactions of climate hazards you identified, with each of your building's components!\n")
+do_vulnerability_ranking = yes_or_no("As part of this step, would you like to consider the relative level of concern you have for each of these interactions on a 1-10 scale?  This well help me prioritize what climate information may be most important to you.")
+    
 input("Press Enter to continue...")
 for component in building_component_dict:
-    per_component_hazard_dict={}
-    for h,v in hazard_dict.items():
+    per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
+    for hazard, tmp in hazard_dict.items():
         print(screen_clear)
-        print("Let's consider\n    "+h.upper()+"\nin the context of your building's\n    "+component.upper()+".\n")
-        print(hazard_dict[h]["direction_statement"]+"\nReflecting on this, might you be concerned that "+h+" could impact your "+component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
+        print("Let's consider\n    "+hazard.upper() +
+              "\nin the context of your building's\n    "+component.upper()+".\n")
+        print(hazard_dict[hazard]["direction_statement"]+"\nReflecting on this, might you be concerned that "+hazard+" could impact your " +
+              component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
         if yes_or_no("") is True:
-            per_component_hazard_dict[h]='' #add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
+            # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
+            per_component_hazard_dict[hazard] = np.nan #set vulnerability ranking to nan here as placeholder.
     print(screen_clear)
-    if per_component_hazard_dict != []:
-        #print("You've identified a number of hazards that could impact your building's "+component+".\n")
-        print("Please identify from 1-10, how concerned you are about impacts to the "+component+".\n")
-        print("\nUse the following qualitative scale:\n")
-        print("    <1----------------------------------------------------------------10>")
-        print("not very concerned                                           extremely concerned\n")
-        
-        for k,v in per_component_hazard_dict.items():
-            while True:
-                rankval=input(k+" (1-10):")
-                if rankval.isnumeric():
-                    rankval=int(rankval)
-                    if 1<=rankval<=10:
-                        per_component_hazard_dict[k]=int(rankval)
-                        break
+    if do_vulnerability_ranking:
+        if per_component_hazard_dict != []:
+            #print("You've identified a number of hazards that could impact your building's "+component+".\n")
+            print(
+                "Please identify from 1-10, how concerned you are about impacts to the "+component+".\n")
+            print("\nUse the following qualitative scale:\n")
+            print("    <1----------------------------------------------------------------10>")
+            print("not very concerned                                           extremely concerned\n")
+            for pc_hazard, tmp in per_component_hazard_dict.items():
+                while True:
+                    rankval = input(pc_hazard+" (1-10):")
+                    if rankval.isnumeric():
+                        rankval = int(rankval)
+                        if 1 <= rankval <= 10:
+                            # set dictionary value for hazard, to non-nan rankval value.
+                            per_component_hazard_dict[pc_hazard] = int(rankval)
+                            break
+                        else:
+                            print("Whoops - please enter a number from 1-10")
                     else:
-                        print("Whoops - please enter a number from 1-10")  
-                else:
-                    print("Whoops - please enter a number from 1-10")
-    
-    print(screen_clear)    
-    building_component_dict[component]=per_component_hazard_dict
+                        print("Whoops - please enter a number from 1-10")
+
+    print(screen_clear)
+    building_component_dict[component] = per_component_hazard_dict
 
 # %% 
 
@@ -419,44 +443,42 @@ print("\n")
 print("STEP 5: SUMMARY REPORT")
 print("\n")
 
-print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO A FULL CLIMATE CHANGE RISK ASSESSMENT!\n")
+print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO INTEGRATE CLIMATE CHANGE CONSIDERATIONS INTO BUILDING PLANNING!\n")
 print("LET ME SUMMARIZE YOUR RESULTS, AND TRY TO POINT YOU TO SOME POTENTIAL SOURCES OF GOOD PAST AND FUTURE CLIMATE INFORMATION THAT IS RELEVANT TO YOUR BUILDING!\n")
 
 sep="\n->"
 
-# %% 
 # Estimate component(s) with most/least vulnerabilities by summing up numerical rankings for all hazards for each component.
 aggregate_hazard_list=[]
 for component,per_component_hazard_dict in building_component_dict.items():
     sumval=0
-    for hazard,ranking in per_component_hazard_dict.items():
-        sumval=sumval+ranking
+    for hazard,rankval in per_component_hazard_dict.items():
+        sumval=sumval+rankval #This just adds 'NaNs' to the sum, if do_vulnerability_ranking == False
         aggregate_hazard_list.append(hazard)
-    building_component_dict[component]["total_hazard_sum"]=sumval
-    
+    building_component_dict[component]["total_hazard_sum"]=sumval #record the final sum value in dictionary entry
+
 ranks=[]
 for component in building_component_dict:
     ranks.append(building_component_dict[component]["total_hazard_sum"])
     
 sortrank=sorted(ranks, reverse=True)
 # %%
-
-print ("\n")
-print("\nBased on your entries, I have tried to rank your building's components from MOST to LEAST vulnerable:\n")
-j=0
-for i in range(len(sortrank)):
-    if i+j < len(sortrank):
-        flag=0
-        for component in building_component_dict:
-            if building_component_dict[component]["total_hazard_sum"]==sortrank[i+j]:
-                if flag != 1:
-                    print("  "+str(i+j+1)+".  "+component)
-                else:
-                    print("  "+str(i+j+1)+". (tie)  " + component)
-                    j+=1
-                flag=1
-
-print("\nIt might make sense to focus most on the components nearer the top of this list if you plan to do a climate change risk or resiliency assessment.")
+if do_vulnerability_ranking:
+    print("\n")
+    print("\nBased on your entries, I have tried to rank your building's components from MOST to LEAST vulnerable:\n")
+    j = 0
+    for i in range(len(sortrank)):
+        if i+j < len(sortrank):
+            flag = 0
+            for component in building_component_dict:
+                if building_component_dict[component]["total_hazard_sum"] == sortrank[i+j]:
+                    if flag != 1:
+                        print("  "+str(i+j+1)+".  "+component)
+                    else:
+                        print("  "+str(i+j+1)+". (tie)  " + component)
+                        j += 1
+                    flag = 1
+    print("\nIt might make sense to focus most on the components nearer the top of this list during your building planning work.")
 
 # %% 
 # Rank hazards by # of times they are mentioned as component hazards.  Display top hazards.
@@ -465,7 +487,7 @@ max_len=min(3,len(l_sorted))
 print("Based on these lists, the top climate hazards that impact the most components of building appear to be:\n")
 for h in range(max_len):
     print("->"+l_sorted[h][0])
-print("\nIt might make sense to focus most on these hazards during your climate change risk assessment climate data gathering.\n")
+print("\nIt might make sense to focus most on these hazards during data gathering for your building planning work.\n")
 
 input ("Press ENTER to continue")
 print(screen_clear)
@@ -513,12 +535,13 @@ input("4) You developed a summary that prioritized major hazards and identified 
 input("Your next tasks are: (ENTER to continue)\n")
 input("5) Get this climate information and develop a tailored climate change summary report for your building... (ENTER to continue)\n")
 input("6) Use this report to understand how the likelihood and severity of each hazard will change in the future... (ENTER to continue)\n")
-input("7) Undertake risk assessments for present and future conditions to understand how risks will change for each of your components over time... (ENTER to continue)\n")
-input("8) If any risk profiles risk to unacceptable levels due to climate change, consider developing risk reduction (adaptation) actions! (ENTER to continue)\n")
+input("7) Undertake impact, vulnerability or risk assessments for present and future conditions if you want to understand how these will change for each of your components over time due to climate change... (ENTER to continue)\n")
+input("8) Consider developing adaptation plans and actions to ensure your building's resilience, now and in the future! (ENTER to continue)\n")
 
 print("\n")
 print("Well done, and good luck with using this climate information and training to increase your building's resilience to climate change!")
 email_address=input("Enter your email address to receive a brief report that summarizes the results of this decision support tool!") #FYI
+#TODO: generate an email or PDF-based send-out report.
 input("When you're ready to say goodbye, press ENTER!")
 
 print(screen_clear)
