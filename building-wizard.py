@@ -153,8 +153,10 @@ while design_life=='help':
 design_year=int(construction_date) + int(design_life)
 decade=int(round(design_year,-1))
 if decade <2030:
-    raise TypeError("Looks like your "+building_type+"'s design life is relatively short!  You may not need to worry about using future climate information!  Stick to good historical observations instead!\n")
-
+    print("Looks like your "+building_type+"'s expected design life is relatively short!\n")
+    print("For relatively short-term design lives, you may want to consider applying recent observational weather and climate information, instead of future projections from climate models.\n")
+    print("However, be careful using only past observations – some impacts are already quite different due to ongoing climate change. You may need expert opinion for this or use of climate model simulation resuts centred on the present day.\n")
+    print("Keep these thoughts in mind in the context of your building's design life, as you continue with this exercise.\n")
 if decade > 2070:
     if decade > 2100:
         print("NOTE: Just a heads up, I only have climate data that goes until the year 2100. Your building's design life exceeds this time frame. I'll just stick to showing you data from the 30-year period spanning 2071-2100.")
@@ -169,7 +171,6 @@ loc_address=str(input("Location of building site (full or partial address)? \n >
 location = geolocator.geocode(loc_address)
 latitude = location.latitude
 longitude = location.longitude  
-
 
 #else:
 #    latitude=float(input("Enter your Latitude (in decimals): \n >"))
