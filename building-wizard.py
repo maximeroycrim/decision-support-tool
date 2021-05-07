@@ -42,8 +42,6 @@ def yes_or_no(question):
             else:
                 print("Whoops - please enter 'y' or 'n'.")
 
-
-
 #%%
           
 screen_clear="\033[H\033[J"
@@ -135,7 +133,7 @@ if yes_or_no("Is this an existing building?\n >"):
         #TODO: based on old_construction flag, add a comment in final report generator.
         print("It looks like your building is at least 20 years old already!  Climate has changed significantly since then - you should assess whether your building is already at risk from change climate conditions!")
 else:
-    building_stage=input("OK, so what stage of the building process are you in? (design stage, construction stage, retrofitting, etc.) \n >")
+    building_stage=input("OK, so what stage of the design/build process are you in?\n >")
     construction_date=input("And what's the anticipated final year of construction? \n >")
 
 #TODO: see if possible to auto-specify standard design lives from NBCC or CSA S478 Building Durability
@@ -171,10 +169,6 @@ loc_address=str(input("Location of building site (full or partial address)? \n >
 location = geolocator.geocode(loc_address)
 latitude = location.latitude
 longitude = location.longitude  
-
-#else:
-#    latitude=float(input("Enter your Latitude (in decimals): \n >"))
-#    longitude=float(input("Enter your Longitude (in negative degrees west, in decimals): \n >"))
 
 if not 41. <= latitude <= 84.:
     raise TypeError("Looks like your latitude is outside of Canada.  Can you re-check this?\n")
@@ -228,13 +222,13 @@ building_component_dict={}
 
 # Load the master list of building components, from which a subset of user-specific building hazards is built.
 with open('master_building_component_database.json', 'r') as j:
-    master_building_component_dict = json.loads(j.read())
+    master_building_component_dict = json.load(j)
 
 for c in master_building_component_dict:
     if yes_or_no(c + " - " + master_building_component_dict[c]["description"]):
         for g in master_building_component_dict[c]["group"]:
             if yes_or_no("   " + g):
-                building_component_dict[g]=g #master_building_component_dict[c][g]
+                building_component_dict[g]={} #create a new building component dictionary item, which itself is an empty dictionary
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
 print("\nAre there any other major structural or system components of your building and property that you'd like to include?\n")
@@ -243,7 +237,7 @@ print("For this exercise, let's try to keep to a high level here (12-15 componen
 while True:
     token=input("->")
     if token != "done":
-        building_component_dict[token]=[]
+        building_component_dict[token]={}  #create a new building component dictionary item, which itself is an empty dictionary
     else:
         break 
 
@@ -266,113 +260,27 @@ hazard_dict={}
 
 # Load the master list of climate hazards, from which a subset of user-specific building hazards is built,
 with open('master_hazard_database.json', 'r') as j:
-    master_hazard_dict = json.loads(j.read())
+    master_hazard_dict = json.load(j)
 
 #Dynamically generate a customized hazard_dict based on user prompts.
-hazard_list=["extreme rain","high winds","extreme heat","extreme cold","extreme snow","wildfire","river/lake flooding"] #TODO: get this from JSON file
-for h in hazard_list:
-    print(screen_clear)
-    draw_stuff(h)
-    print(h.upper())
-    print(master_hazard_dict[h]["impact_statement"])
-    if master_hazard_dict[h]["type"]=="threshold":
-
-        while True:      
-            if h=='extreme cold':
-                options=[-15,-25]
-                threshold=input("\nWhat temperature threshold should I use for "+h+" days, in your experience?\n(Choose one: -15 or -25)\n >")
-            if h=='extreme heat':
-                options=[25, 27, 29, 30, 32]
-                threshold=input("\nWhat temperature threshold should I use for "+h+" days, in your experience?\n(Choose one: 25, 27, 29, 30, or 32)\n >")
-            if threshold.strip('-').isnumeric():
-                threshold=int(threshold)
-                if threshold in options:
-                    master_hazard_dict[h]["var"]=str(str(master_hazard_dict[h]["var"])+"_"+str(threshold))
-                    master_hazard_dict[h]["var_en"]=str(str(master_hazard_dict[h]["var_en"])+" "+str(threshold)+" °C")
-                    break
-                else:
-                    print("Whoops - please enter a valid temperature threshold")  
-            else:
-                print("Whoops - please enter a valid temperature threshold")        
-        
-    if master_hazard_dict[h]["resource"]=="climatedata.ca":
-                #url containing line chart data
-        data_url="https://data.climatedata.ca/generate-charts/"+str(latitude)+"/"+str(longitude)+"/"+str(master_hazard_dict[h]["var"])+"/ann"
-        r = requests.get(data_url)
-        data=r.json()
-        #note: the year 1970 is the 'zero' year for the chart data.
-        #note: times are given in miliseconds from/since 1970.
-
-        #TODO: make the start and end periods both align with the project life.  
-        #TODO: add direction of change statements to all source versions.  add 'not much change' statement based on releativre change
-        time = np.array([i[0] for i in data['modeled_historical_median']])/31536000000.
-        val = np.array([i[1] for i in data['modeled_historical_median']])
-        baseline_mean=np.mean(val[time<=2000-1970])
-        time = np.array([i[0] for i in data['rcp85_median']])/31536000000.
-        val = np.array([i[1] for i in data['rcp85_median']])
-        future_mean=np.mean(val[(decade-1970<=time) & (time<=decade+30-1970)])
-        dv=future_mean-baseline_mean
-        if float(dv) >= 0:
-            direction_statement="increase"
-        else:
-            direction_statement="decrease"    
-        print("\nI've found some information from climatedata.ca for "+h.upper()+ " at your location")
-        print("\n                         "+master_hazard_dict[h]["var_en"])
-        print("------------------------------------------------------------------")
-        print("\t1970-2000 Baseline\t"+str(decade)+"-"+str(decade+30)+" Future (RCP8.5)")
-        print("\t" + str(round((baseline_mean),0)) + " " + master_hazard_dict[h]["units"]+"         \t"+str(round((future_mean),0)) + " " + master_hazard_dict[h]["units"]+" (a change of " + str(round(((future_mean-baseline_mean)/baseline_mean*100),0))+"%)")
-        
-    elif master_hazard_dict[h]["resource"]=="CRBCPI":
-        #TODO: get updated historical info, so we can report absolute change (and not just delta)
-        url=master_hazard_dict[h]["URL"]
-        location=CRBCPI_data["+0.5C"]["Location"][np.squeeze(CRBCPI_i)]
-        proximity="{x:.0f}".format(x=np.squeeze(CRBCPI_distance)*6378.) # convert distance from radians to kilometers, format for rounded-value printing
-        
-        # Convert from dT-based scaling to scenario/year scaling using interpolation in time.
-        x=CRBCPI_dT_to_time['RCP8.5'] 
-        var=master_hazard_dict[h]["var"]
-        y=[]
-        for dT in dT_levels:
-            y.append(CRBCPI_data[dT][var+"_"+dT][CRBCPI_i])
-        dv=np.interp(decade,x,y) 
-        #TODO: consider if we can change the decade value - CRBCPI data can go with shorter climatological periods. 
-        dv="{x:.0f}".format(x=dv)
-        print("\nI've found some information from the Climate-Resilient Buildings and Core Public Infrastructure (RCBCPI) project for "+h.upper()+" near your location, specifically, "+master_hazard_dict[h]["var_en"]+".")
-        print("This information is from "+location+", around "+proximity+"km from your building site.\n")
-        if float(dv) >= 0:
-            direction_statement="increase"
-        else:
-            direction_statement="decrease"            
-        print(master_hazard_dict[h]["var_en"]+" looks set to "+direction_statement+" (for example, by around "+dv+master_hazard_dict[h]["units"]+", by the end of your building's design life, for the high-end RCP 8.5 climate change scenario).")
-        print(master_hazard_dict[h]["direction_confidence"])
-        print(master_hazard_dict[h]["magnitude_confidence"])
-    else:
-        print("")
-    if yes_or_no("Based on this general information, and considering your region's and building's possible vulnerabilities to "+h.upper()+" now or in the future, should I include "+h.upper()+" in this assessment?\n"):
-        hazard_dict[h]=master_hazard_dict[h] 
-   
-print(screen_clear)
-draw_stuff('sea level rise')       
-if yes_or_no("Is your region near the ocean?\n"):
-    if elev > 50.:
-        h="sea level rise"
+for h in master_hazard_dict.keys():
+    if h != "other":
+        print(screen_clear)
+        draw_stuff(h)
         print(h.upper())
         print(master_hazard_dict[h]["impact_statement"])
-        if yes_or_no("Based on your elevation, even though your region is near the ocean, it sounds like you may not have to worry about sea level rise.  Is it OK to skip an assessment of sea level rise on your building?\n") is False:
-            hazard_dict[h]=master_hazard_dict[h]
-    else:
-        h="sea level rise"
-        hazard_dict[h]=master_hazard_dict[h]            
-
-if latitude > 55.: #This threshold was quickly set - should re-evaluate based on CRBCPI or other, Canadian permafrost map.
-    draw_stuff('extreme cold')
-    h="permafrost loss"
-    print(h.upper())
-    print(master_hazard_dict[h]["impact_statement"])
-    if yes_or_no("Does any permafrost occur in your region?\n"):
-        hazard_dict[h]=master_hazard_dict[h]
-    print(screen_clear)
-
+        print(master_hazard_dict[h]["direction_statement"])
+        if yes_or_no("Considering your region's and building's possible vulnerabilities to "+h.upper()+" now or potentially in the future, do you want me to include "+h.upper()+" in this assessment?\n"):
+            hazard_dict[h]=master_hazard_dict[h] 
+            if h == "sea level rise" and elev > 50:
+                if yes_or_no("Just to double-check - you consider sea level rise a concern, but your building's elevation above sea level seems pretty high ("+str(elev)+").  Are you sure you want to include sea level in this assessment\n") is False:
+                    print("OK, thanks for clarifying - I won't consider it further.")
+                    hazard_dict.pop(h)
+            if h == "permafrost" and latitude < 55.:
+                if yes_or_no("Just to double-check - you consider permafrost loss a concern, but your building doesn't seem to be that far north (a latitude of "+str(latitude)+").  Are you sure you want to include permafrost in this assessment\n") is False:
+                    print("OK, thanks for clarifying - I won't consider it further.")
+                    hazard_dict.pop(h)            
+print(screen_clear)
 
 # %%
 # And allow for 'other' entries
@@ -435,7 +343,7 @@ for component in building_component_dict:
                         print("Whoops - please enter a number from 1-10")
 
     print(screen_clear)
-    building_component_dict[component] = per_component_hazard_dict
+    building_component_dict[component]["hazards"] = per_component_hazard_dict
 
 # %% 
 
@@ -450,21 +358,20 @@ print("LET ME SUMMARIZE YOUR RESULTS, AND TRY TO POINT YOU TO SOME POTENTIAL SOU
 sep="\n->"
 
 # Estimate component(s) with most/least vulnerabilities by summing up numerical rankings for all hazards for each component.
-aggregate_hazard_list=[]
+aggregate_hazard_list=Counter()
 for component,per_component_hazard_dict in building_component_dict.items():
-    sumval=0
-    for hazard,rankval in per_component_hazard_dict.items():
-        sumval=sumval+rankval #This just adds 'NaNs' to the sum, if do_vulnerability_ranking == False
-        aggregate_hazard_list.append(hazard)
-    building_component_dict[component]["total_hazard_sum"]=sumval #record the final sum value in dictionary entry
+    building_component_dict[component]["total_hazard_sum"]=0
+    for hazard,rankval in per_component_hazard_dict["hazards"].items():
+        building_component_dict[component]["total_hazard_sum"] += rankval #This just adds 'NaNs' to the sum, if do_vulnerability_ranking == False
+        aggregate_hazard_list.update([hazard])
 
-ranks=[]
-for component in building_component_dict:
-    ranks.append(building_component_dict[component]["total_hazard_sum"])
-    
-sortrank=sorted(ranks, reverse=True)
 # %%
 if do_vulnerability_ranking:
+    # iterate over building components, and get indice list corresponding to most-hazard-impacted, to least.
+    ranks=[]
+    for component in building_component_dict:
+        ranks.append(building_component_dict[component]["total_hazard_sum"])
+    sortrank=sorted(ranks, reverse=True)
     print("\n")
     print("\nBased on your entries, I have tried to rank your building's components from MOST to LEAST vulnerable:\n")
     j = 0
@@ -483,7 +390,9 @@ if do_vulnerability_ranking:
 
 # %% 
 # Rank hazards by # of times they are mentioned as component hazards.  Display top hazards.
-l_sorted=Counter(aggregate_hazard_list).most_common()
+
+l_sorted=aggregate_hazard_list.most_common()
+
 max_len=min(3,len(l_sorted))
 print("Based on these lists, the top climate hazards that impact the most components of building appear to be:\n")
 for h in range(max_len):
@@ -493,29 +402,39 @@ print("\nIt might make sense to focus most on these hazards during data gatherin
 input ("Press ENTER to continue")
 print(screen_clear)
 
-
 # %%
 
-print("Based on the hazards that you identified as important to your building components, I've found some specific climate data resources for you.")
-for h,r in l_sorted:
-    if hazard_dict[h]["resource"]=="climatedata.ca":
-        print("\nI've found some "+master_hazard_dict[h]["var_en"]+" information on ClimateData.ca for "+h.upper()+" at your location.")
-        if yes_or_no("Would you like me to open a map in your web browser, where you can read more about "+master_hazard_dict[h]["var_en"]+ " and access data for your location for different future scenarios?"):
-            url="https://climatedata.ca/explore/variable/?coords="+str(latitude)+","+str(longitude)+",12&geo-select=&var="+str(hazard_dict[h]["var"])+"&var-group="+str(hazard_dict[h]["group"])+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector="
-            webbrowser.open(url,new=0,autoraise=False)
-    if hazard_dict[h]["resource"]=="CRBCPI":
-        print("\nI've found some information from the Climate-Resilient Buildings and Core Public Infrastructure (CRBCPI) project for "+h.upper()+", near your location, specifically, "+master_hazard_dict[h]["var_en"]+", for "+location+", around "+proximity+"km from your building site.")
-        if yes_or_no("Would you like me to open the CRBCPI report section on "+master_hazard_dict[h]["var_en"]+", where you can read more about "+master_hazard_dict[h]["var_en"]+" projections, and get links to the actual data)?"):
-            url=master_hazard_dict[h]["URL"]
-            webbrowser.open(url,new=0,autoraise=False)
-    elif hazard_dict[h]["resource"]=="":
-        print("\nI've found some information for you to consider when assessing climate change impacts to "+h+" to your building.")
-        if yes_or_no("Would you like me to open this material in a browser tab?"):
-            url=master_hazard_dict[h]["URL"]
-            webbrowser.open(url,new=0,autoraise=False       )     
-
-        
-#TODO: allow for multiple resource URLs
+print("I've found some specific climate information and data resources that are likely to help you, based on the hazards that are important for your building.\n")
+urls=[]
+for hazard,_ in l_sorted:
+    print(" \n")
+    print('********'+hazard.upper()+"********")
+    if hazard_dict[hazard]["resources"]: #if there is actually a dictionary of resources available, proceed -
+        for resource,resource_details in hazard_dict[hazard]["resources"].items():
+            print("   -->Resource: "+resource.upper())
+            print("Information on "+hazard+" is available from "+resource_details["source"]+".")
+            print("This "+resource_details["type"]+" "+resource_details["description"])
+            if resource_details["source"]=="ClimateData.ca":
+                if yes_or_no("Would you like me to open a map in your web browser, where you can access data for your location for different future scenarios?"):
+                    urls.append(resource_details["URL"]+str(latitude)+","+str(longitude)+",12&geo-select=&var="+resource_details["var"]+"&var-group="+resource_details["group"]+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector=")
+            elif resource_details["source"]=="The Climate Resilient Buildings and Core Public Infrastructure Project":
+                location=CRBCPI_data["+0.5C"]["Location"][np.squeeze(CRBCPI_i)]
+                proximity="{x:.0f}".format(x=np.squeeze(CRBCPI_distance)*6378.) # convert distance from radians to kilometers, format for rounded-value printing
+                print("In addition to regional information, this resource has local-scale data that can be used with care.  It appears there is data available for "+location +", around "+proximity+" kilometers away from your building site.")
+                if yes_or_no("Would you like me to open the CRBCPI report section on "+resource+", where you can read more about this?"):
+                    urls.append(resource_details["URL"])
+            else:
+                if yes_or_no("Would you like me to open a website where you can read more about this?"):
+                    urls.append(resource_details["URL"])
+    else:
+        print("Sorry, I don't have any information for: "+hazard+" quite yet.  Please give the CCCS Service Desk a call (1-833-517-0376) to request some one-on-one help!")
+        if yes_or_no("Would you like me to open the CCCS Service Desk website?"):   
+            urls.append("https://climate-change.canada.ca/support-desk/Index")
+    print(" \n")
+    
+for url in set(urls): #Open all urls collected from above.  'set' trims this list down to unique urls.
+    webbrowser.open(url,new=0,autoraise=False)
+      
 #TODO: Improve this closing guidance.
 
 # %%
