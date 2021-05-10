@@ -416,7 +416,7 @@ for hazard,_ in l_sorted:
             print("This "+resource_details["type"]+" "+resource_details["description"])
             if resource_details["source"]=="ClimateData.ca":
                 if yes_or_no("Would you like me to open a map in your web browser, where you can access data for your location for different future scenarios?"):
-                    urls.append(resource_details["URL"]+str(latitude)+","+str(longitude)+",12&geo-select=&var="+resource_details["var"]+"&var-group="+resource_details["group"]+"&mora=ann&rcp=rcp85&decade="+str(decade)+"s&sector=")
+                    urls.append(resource_details["URL"]+str(latitude)+","+str(longitude)+",12&geo-select=&var="+resource_details["var"]+"&var-group="+resource_details["group"]+"&mora="+resource_details["season"]+"&rcp=rcp85&decade="+str(decade)+"s&sector=")
             elif resource_details["source"]=="The Climate Resilient Buildings and Core Public Infrastructure Project":
                 location=CRBCPI_data["+0.5C"]["Location"][np.squeeze(CRBCPI_i)]
                 proximity="{x:.0f}".format(x=np.squeeze(CRBCPI_distance)*6378.) # convert distance from radians to kilometers, format for rounded-value printing
