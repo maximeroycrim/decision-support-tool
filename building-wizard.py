@@ -386,7 +386,7 @@ if do_vulnerability_ranking:
                         print("  "+str(i+j+1)+". (tie)  " + component)
                         j += 1
                     flag = 1
-    print("\nIt might make sense to focus most on the components nearer the top of this list during your building planning work.")
+    print("\nIt might make sense to focus most on understanding climate change risks to the components nearer the top of this list during your building planning work.")
 
 # %% 
 # Rank hazards by # of times they are mentioned as component hazards.  Display top hazards.
@@ -409,26 +409,33 @@ urls=[]
 for hazard,_ in l_sorted:
     print(" \n")
     print('********'+hazard.upper()+"********")
+    
+    print("Here's some context for considering shifts in "+hazard+" due to climate change\n")
+    print(hazard_dict[hazard]["direction_statement"])
+    print(hazard_dict[hazard]["direction_confidence"])
+    print(hazard_dict[hazard]["magnitude_confidence"])
+    print("In light of this context, here are some resources that I think could help you develop better understanding of changes to "+hazard+" impacts to your building:")
     if hazard_dict[hazard]["resources"]: #if there is actually a dictionary of resources available, proceed -
         for resource,resource_details in hazard_dict[hazard]["resources"].items():
-            print("   -->Resource: "+resource.upper())
-            print("Information on "+hazard+" is available from "+resource_details["source"]+".")
-            print("This "+resource_details["type"]+" "+resource_details["description"])
+            print("\n")
+            print("    --->Resource: "+resource.upper()+"<---")
+            print("    Information on "+hazard+" is available from "+resource_details["source"]+".")
+            print("    This "+resource_details["type"]+" "+resource_details["description"])
             if resource_details["source"]=="ClimateData.ca":
-                if yes_or_no("Would you like me to open a map in your web browser, where you can access data for your location for different future scenarios?"):
+                if yes_or_no("    Would you like me to open a map in your web browser, where you can access data for your location for different future scenarios?"):
                     urls.append(resource_details["URL"]+str(latitude)+","+str(longitude)+",12&geo-select=&var="+resource_details["var"]+"&var-group="+resource_details["group"]+"&mora="+resource_details["season"]+"&rcp=rcp85&decade="+str(decade)+"s&sector=")
             elif resource_details["source"]=="The Climate Resilient Buildings and Core Public Infrastructure Project":
                 location=CRBCPI_data["+0.5C"]["Location"][np.squeeze(CRBCPI_i)]
                 proximity="{x:.0f}".format(x=np.squeeze(CRBCPI_distance)*6378.) # convert distance from radians to kilometers, format for rounded-value printing
-                print("In addition to regional information, this resource has local-scale data that can be used with care.  It appears there is data available for "+location +", around "+proximity+" kilometers away from your building site.")
-                if yes_or_no("Would you like me to open the CRBCPI report section on "+resource+", where you can read more about this?"):
+                print("    In addition to regional information, it appears there is data available for "+location +", around "+proximity+" km away from your  site.")
+                if yes_or_no("    Would you like me to open the CRBCPI report section on "+resource+", where you can read more about how to use this information?"):
                     urls.append(resource_details["URL"])
             else:
-                if yes_or_no("Would you like me to open a website where you can read more about this?"):
+                if yes_or_no("    Would you like me to open a website where you can read more about this?"):
                     urls.append(resource_details["URL"])
     else:
-        print("Sorry, I don't have any information for: "+hazard+" quite yet.  Please give the CCCS Service Desk a call (1-833-517-0376) to request some one-on-one help!")
-        if yes_or_no("Would you like me to open the CCCS Service Desk website?"):   
+        print("    Sorry, I don't have any information for: "+hazard+" quite yet.  Please give the CCCS Service Desk a call (1-833-517-0376) to request some one-on-one help!")
+        if yes_or_no("    Would you like me to open the CCCS Service Desk website?"):   
             urls.append("https://climate-change.canada.ca/support-desk/Index")
     print(" \n")
     
