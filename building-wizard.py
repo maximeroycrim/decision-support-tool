@@ -68,12 +68,11 @@ input("Press Enter to continue...")
 print(screen_clear)
 
 print("CLIMATE DECISION SUPPORT TOOL DISCLAIMER AND RELEASE OF LIABILITY")
-print('This tool supports users in learning how to identify a subset of appropriate climate change information for building planning.  However, it is not an offical engineering design tool.  Users of this tool accept full responsibilty for expert judgement and professional standard of care in applying this and other climate change information to detailed project planning and engineering.  The authors of this tool accept no responsibilty for damage resulting from misuse of the datasets provided by this tool during project planning or execution.')
-print('This tool endeavours to summarize a selection of important building hazards and describe changes to these hazards resulting from climate change.  However, some hazards do not have reliable future information available, to the best knowledge of the authors of this tool, at this time.  The authors take no responsibility for negligent omission of consideration of such hazards in project planning or execution.')
-print('This tool is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and non infringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the tool.')
-print("")
-print('In short, please combine the use of this tool with personal judgement, and full acceptance of liability and professional standard of care.')
-input("Press Enter to begin...")
+print('\nThis tool supports users in learning how to identify a subset of appropriate climate change information for building planning.  However, it is not an offical engineering design tool.  Users of this tool accept full responsibilty for expert judgement and professional standard of care in applying this and other climate change information to detailed project planning and engineering.  The authors of this tool accept no responsibilty for damage resulting from misuse of the datasets provided by this tool during project planning or execution.')
+print('\nThis tool endeavours to summarize a selection of important building hazards and describe changes to these hazards resulting from climate change.  However, some hazards do not have reliable future information available, to the best knowledge of the authors of this tool, at this time.  The authors take no responsibility for negligent omission of consideration of such hazards in project planning or execution.')
+print('\nThis tool is provided "as is", without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and non infringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the tool.')
+print("\nIn short, please combine the use of this tool with personal judgement, and full acceptance of liability and professional standard of care.")
+input("\nPress Enter to begin...")
 
 #%%
 # CHECK USER'S BACKGROUND KNOWLEDGE
@@ -107,10 +106,7 @@ if yes_or_no("Are you familiar with the Government of Canada Climate Lens progra
 if yes_or_no("Are you familiar with the Federation of Canadian Municipalities for Climate Innovation program?") is False:
     url="https://fcm.ca/en/programs/municipalities-climate-innovation-program/climate-change-adaptation"
     webbrowser.open(url,new=2,autoraise=False)    
-    
-if yes_or_no("Are you familiar with Monty Python's Architect Sketch?") is False:
-    url="https://www.youtube.com/watch?v=QfArEGCm7yM"
-    webbrowser.open(url,new=2,autoraise=False)     
+     
 
 input ("Press ENTER to continue...")
 #%%
@@ -243,7 +239,7 @@ while True:
 
 #%%
 
-#NEXT STEP: UNDERSTAND HISTORICAL CLIMATE HAZARDS IN REGION
+#STEP 3: UNDERSTAND HISTORICAL CLIMATE HAZARDS IN REGION
 print(screen_clear)
 print("\n")
 print("STEP 3: WEATHER HAZARDS AND CLIMATE DATA")
@@ -262,16 +258,56 @@ hazard_dict={}
 with open('master_hazard_database.json', 'r') as j:
     master_hazard_dict = json.load(j)
 
+print("\n")
+do_vulnerability_ranking = yes_or_no("As part of this step, would you like to consider the relative level of concern you have for each of these interactions on a 1-10 scale?  This well help me prioritize what climate information may be most important to you.")
+
 #Dynamically generate a customized hazard_dict based on user prompts.
 for h in master_hazard_dict.keys():
     if h != "other":
         print(screen_clear)
         draw_stuff(h)
         print(h.upper())
-        print(master_hazard_dict[h]["impact_statement"])
-        print(master_hazard_dict[h]["direction_statement"])
+        print("---------------------------------------------------------------------------")
+        print("\n"+master_hazard_dict[h]["impact_statement"])
+        print("\n"+master_hazard_dict[h]["direction_statement"])
+        print("---------------------------------------------------------------------------")
         if yes_or_no("Considering your region's and building's possible vulnerabilities to "+h.upper()+" now or potentially in the future, do you want me to include "+h.upper()+" in this assessment?\n"):
             hazard_dict[h]=master_hazard_dict[h] 
+
+            print("\nThanks. I also need to know what components are vulnerable to "+h.upper()+"\n")
+            if do_vulnerability_ranking:
+                print("At the same time, I will also ask you to subjectively rank these vulnerabilities.\n")
+                print("\n    Please use the following qualitative scale for those questions:\n")
+                print("         <1----------------------------------------------------------------10>")
+                print("     not very concerned                                           extremely concerned\n")  
+
+            for component in building_component_dict:
+                per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
+
+                if yes_or_no("     Are you concerned that "+h+" could impact your " + component.upper()+" now or in the future?") is True:
+                    # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
+                    per_component_hazard_dict[h] = np.nan #set vulnerability ranking to nan here as placeholder.
+                if do_vulnerability_ranking:
+                    if per_component_hazard_dict != []:
+                        #print("You've identified a number of hazards that could impact your building's "+component+".\n")
+                        for pc_hazard, tmp in per_component_hazard_dict.items():
+                            while True:
+                                rankval = input("     How concerned? (1-10):")
+                                if rankval.isnumeric():
+                                    rankval = int(rankval)
+                                    if 1 <= rankval <= 10:
+                                        # set dictionary value for hazard, to non-nan rankval value.
+                                        per_component_hazard_dict[pc_hazard] = int(rankval)
+                                        break
+                                    else:
+                                        print("     Whoops - please enter a number from 1-10")
+                                else:
+                                    print("     Whoops - please enter a number from 1-10")
+                    print("\n")
+                building_component_dict[component]["hazards"] = per_component_hazard_dict
+    
+
+            '''
             if h == "sea level rise" and elev > 50:
                 if yes_or_no("Just to double-check - you consider sea level rise a concern, but your building's elevation above sea level seems pretty high ("+str(elev)+").  Are you sure you want to include sea level in this assessment\n") is False:
                     print("OK, thanks for clarifying - I won't consider it further.")
@@ -279,7 +315,8 @@ for h in master_hazard_dict.keys():
             if h == "permafrost" and latitude < 55.:
                 if yes_or_no("Just to double-check - you consider permafrost loss a concern, but your building doesn't seem to be that far north (a latitude of "+str(latitude)+").  Are you sure you want to include permafrost in this assessment\n") is False:
                     print("OK, thanks for clarifying - I won't consider it further.")
-                    hazard_dict.pop(h)            
+                    hazard_dict.pop(h)
+            '''        
 print(screen_clear)
 
 # %%
@@ -291,65 +328,46 @@ while True:
     token=input("->")
     if token != "done":
         hazard_dict.update({token:master_hazard_dict["other"]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
+
+        print("\n     Thanks. I also need to know what components are vulnerable to "+token.upper()+"\n")
+        if do_vulnerability_ranking:
+            print("     At the same time, I will also ask you to subjectively rank these vulnerabilities.\n")
+            print("\n         Please use the following qualitative scale for those questions:\n")
+            print("              <1----------------------------------------------------------------10>")
+            print("          not very concerned                                           extremely concerned\n")   
+
+        for component in building_component_dict:
+            per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
+            if yes_or_no("     Are you concerned that "+h+" could impact your " + component.upper()+" now or in the future?") is True:
+                # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
+                per_component_hazard_dict[h] = np.nan #set vulnerability ranking to nan here as placeholder.
+            if do_vulnerability_ranking:
+                if per_component_hazard_dict != []:
+                    #print("You've identified a number of hazards that could impact your building's "+component+".\n")
+                    for pc_hazard, tmp in per_component_hazard_dict.items():
+                        while True:
+                            rankval = input("     How concerned? (1-10):")
+                            if rankval.isnumeric():
+                                rankval = int(rankval)
+                                if 1 <= rankval <= 10:
+                                    # set dictionary value for hazard, to non-nan rankval value.
+                                    per_component_hazard_dict[pc_hazard] = int(rankval)
+                                    break
+                                else:
+                                    print("     Whoops - please enter a number from 1-10")
+                            else:
+                                print("     Whoops - please enter a number from 1-10")
+                print("\n")
+            building_component_dict[component]["hazards"] = per_component_hazard_dict
+        print("Any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
     else:
         break
-
-
-#%%
-
-#Now prompt the user to consider the weather/climate impacts, on a componentwise basis.
-##Provide some standard hazards, and then prompt user to add more if needed
-print(screen_clear)
-print("\n")
-print("STEP 4: WEATHER AND CLIMATE IMPACTS ON BUILDING SYSTEMS AND COMPONENTS")
-print("\n")
-
-print("Now, let's consider the interactions of climate hazards you identified, with each of your building's components!\n")
-do_vulnerability_ranking = yes_or_no("As part of this step, would you like to consider the relative level of concern you have for each of these interactions on a 1-10 scale?  This well help me prioritize what climate information may be most important to you.")
-    
-input("Press Enter to continue...")
-for component in building_component_dict:
-    per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
-    for hazard, tmp in hazard_dict.items():
-        print(screen_clear)
-        print("Let's consider\n    "+hazard.upper() +
-              "\nin the context of your building's\n    "+component.upper()+".\n")
-        print(hazard_dict[hazard]["direction_statement"]+"\nReflecting on this, might you be concerned that "+hazard+" could impact your " +
-              component.upper()+" now, or could emerge as a potential impactor to your "+component.upper()+", in the future?")
-        if yes_or_no("") is True:
-            # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
-            per_component_hazard_dict[hazard] = np.nan #set vulnerability ranking to nan here as placeholder.
-    print(screen_clear)
-    if do_vulnerability_ranking:
-        if per_component_hazard_dict != []:
-            #print("You've identified a number of hazards that could impact your building's "+component+".\n")
-            print(
-                "Please identify from 1-10, how concerned you are about impacts to the "+component+".\n")
-            print("\nUse the following qualitative scale:\n")
-            print("    <1----------------------------------------------------------------10>")
-            print("not very concerned                                           extremely concerned\n")
-            for pc_hazard, tmp in per_component_hazard_dict.items():
-                while True:
-                    rankval = input(pc_hazard+" (1-10):")
-                    if rankval.isnumeric():
-                        rankval = int(rankval)
-                        if 1 <= rankval <= 10:
-                            # set dictionary value for hazard, to non-nan rankval value.
-                            per_component_hazard_dict[pc_hazard] = int(rankval)
-                            break
-                        else:
-                            print("Whoops - please enter a number from 1-10")
-                    else:
-                        print("Whoops - please enter a number from 1-10")
-
-    print(screen_clear)
-    building_component_dict[component]["hazards"] = per_component_hazard_dict
 
 # %% 
 
 print(screen_clear)
 print("\n")
-print("STEP 5: SUMMARY REPORT")
+print("STEP 4: SUMMARY REPORT")
 print("\n")
 
 print("GOOD JOB!  IN CONSIDERING POTENTIAL CLIMATE HAZARDS FOR EACH COMPONENT OF YOUR BUILDING, YOU HAVE STARTED ON YOUR WAY TO INTEGRATE CLIMATE CHANGE CONSIDERATIONS INTO BUILDING PLANNING!\n")
@@ -409,12 +427,12 @@ urls=[]
 for hazard,_ in l_sorted:
     print(" \n")
     print('********'+hazard.upper()+"********")
-    
-    print("Here's some context for considering shifts in "+hazard+" due to climate change\n")
-    print(hazard_dict[hazard]["direction_statement"])
-    print(hazard_dict[hazard]["direction_confidence"])
-    print(hazard_dict[hazard]["magnitude_confidence"])
-    print("In light of this context, here are some resources that I think could help you develop better understanding of changes to "+hazard+" impacts to your building:")
+    if hazard.upper != "OTHER":
+        print("Here's some context for considering shifts in "+hazard+" due to climate change\n")
+        print(hazard_dict[hazard]["direction_statement"])
+        print(hazard_dict[hazard]["direction_confidence"])
+        print(hazard_dict[hazard]["magnitude_confidence"])
+        print("In light of this context, here are some resources that I think could help you develop better understanding of changes to "+hazard+" impacts to your building:")
     if hazard_dict[hazard]["resources"]: #if there is actually a dictionary of resources available, proceed -
         for resource,resource_details in hazard_dict[hazard]["resources"].items():
             print("\n")
@@ -450,7 +468,7 @@ input("Press ENTER to continue")
 print(screen_clear)
 
 print("\n")
-print("STEP 6: NEXT STEPS")
+print("STEP 5: NEXT STEPS")
 print("\n")
 
 print("\n")
