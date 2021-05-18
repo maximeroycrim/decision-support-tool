@@ -1,3 +1,4 @@
+
 import json
 from geopy.geocoders import Nominatim
 import webbrowser
@@ -224,7 +225,7 @@ for c in master_building_component_dict:
     if yes_or_no(c + " - " + master_building_component_dict[c]["description"]):
         for g in master_building_component_dict[c]["group"]:
             if yes_or_no("   " + g):
-                building_component_dict[g]={} #create a new building component dictionary item, which itself is an empty dictionary
+                building_component_dict[g]={"hazards":{}} #create a new building component dictionary item, containing a dictionary with an empty 'hazards' key
 
 # Prompt the user to define the components of their building.  This list can be as long as needed.
 print("\nAre there any other major structural or system components of your building and property that you'd like to include?\n")
@@ -233,7 +234,7 @@ print("For this exercise, let's try to keep to a high level here (12-15 componen
 while True:
     token=input("->")
     if token != "done":
-        building_component_dict[token]={}  #create a new building component dictionary item, which itself is an empty dictionary
+        building_component_dict[token]={"hazards":{}}  #create a new building component dictionary item, which itself is an empty dictionary
     else:
         break 
 
@@ -245,9 +246,8 @@ print("\n")
 print("STEP 3: WEATHER HAZARDS AND CLIMATE DATA")
 print("\n")
 draw_stuff("clouds")
-print("\nNext, we need to identify the kinds of weather hazards your building's region is susceptible to.")
-print("\nYou will be asked whether a particular weather hazard occurs in your region. Using some very basic climate model projections, you will also be asked to consider whether a particular weather hazard can emerge as a growing issue in a changing climate.")
-print("\nYou do not need to be a climate scientist to correctly fill this section out - the goals are to identify likely hazards and to consider, at a very high level, the impacts of climate change.")
+print("\nNext, we need to identify the kinds of weather hazards your building's region is, or may become, susceptible to.")
+print("\nYou'll contrast these weather hazards against your building components, to identify the hazards that appear most important, and help me curate a list of good information for you.")
 print("\n")
 input("Press ENTER to continue...")
 
@@ -259,109 +259,50 @@ with open('master_hazard_database.json', 'r') as j:
     master_hazard_dict = json.load(j)
 
 print("\n")
-do_vulnerability_ranking = yes_or_no("As part of this step, would you like to consider the relative level of concern you have for each of these interactions on a 1-10 scale?  This well help me prioritize what climate information may be most important to you.")
+do_vulnerability_ranking = yes_or_no("As part of this step, would you like to consider the relative level of vulnerability each building component has for each hazard, on a 'quick and dirty' 1-10 scale (1=trivially; 10=extremely)?  While this might make this exercise a few minutes longer, it will help me prioritize what climate information may be most important for you.")
 
 #Dynamically generate a customized hazard_dict based on user prompts.
+
+def provide_number(query,lower,upper):
+    while True:
+        n = input(query)
+        if n.isnumeric() and lower <= int(n) <= upper:
+            return int(n)
+        else:
+            print("     Whoops - please enter a number between "+str(lower)+"-"+str(upper)+".")
+
+def update_componentwise_hazard_list(h,building_component_dict,do_vulnerability_ranking):
+            print("Which of your building's components are vulnerable now (or may be in future) to "+h.upper()+"?\n")
+            for component in building_component_dict.keys():
+                if yes_or_no(component.upper()+"->") is True:
+                    building_component_dict[component]["hazards"][h] = np.nan
+                    if do_vulnerability_ranking:
+                        building_component_dict[component]["hazards"][h] = provide_number("     How vulnerable (1-10)?",1,10)
+            return building_component_dict
+                
+
 for h in master_hazard_dict.keys():
     if h != "other":
-        print(screen_clear)
-        draw_stuff(h)
+        #print(screen_clear)
+        #draw_stuff(h)
         print(h.upper())
         print("---------------------------------------------------------------------------")
         print("\n"+master_hazard_dict[h]["impact_statement"])
         print("\n"+master_hazard_dict[h]["direction_statement"])
         print("---------------------------------------------------------------------------")
         if yes_or_no("Considering your region's and building's possible vulnerabilities to "+h.upper()+" now or potentially in the future, do you want me to include "+h.upper()+" in this assessment?\n"):
-            hazard_dict[h]=master_hazard_dict[h] 
-
-            print("\nThanks. I also need to know what components are vulnerable to "+h.upper()+"\n")
-            if do_vulnerability_ranking:
-                print("At the same time, I will also ask you to subjectively rank these vulnerabilities.\n")
-                print("\n    Please use the following qualitative scale for those questions:\n")
-                print("         <1----------------------------------------------------------------10>")
-                print("     not very concerned                                           extremely concerned\n")  
-
-            for component in building_component_dict:
-                per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
-
-                if yes_or_no("     Are you concerned that "+h+" could impact your " + component.upper()+" now or in the future?") is True:
-                    # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
-                    per_component_hazard_dict[h] = np.nan #set vulnerability ranking to nan here as placeholder.
-                if do_vulnerability_ranking:
-                    if per_component_hazard_dict != []:
-                        #print("You've identified a number of hazards that could impact your building's "+component+".\n")
-                        for pc_hazard, tmp in per_component_hazard_dict.items():
-                            while True:
-                                rankval = input("     How concerned? (1-10):")
-                                if rankval.isnumeric():
-                                    rankval = int(rankval)
-                                    if 1 <= rankval <= 10:
-                                        # set dictionary value for hazard, to non-nan rankval value.
-                                        per_component_hazard_dict[pc_hazard] = int(rankval)
-                                        break
-                                    else:
-                                        print("     Whoops - please enter a number from 1-10")
-                                else:
-                                    print("     Whoops - please enter a number from 1-10")
-                    print("\n")
-                building_component_dict[component]["hazards"] = per_component_hazard_dict
-    
-
-            '''
-            if h == "sea level rise" and elev > 50:
-                if yes_or_no("Just to double-check - you consider sea level rise a concern, but your building's elevation above sea level seems pretty high ("+str(elev)+").  Are you sure you want to include sea level in this assessment\n") is False:
-                    print("OK, thanks for clarifying - I won't consider it further.")
-                    hazard_dict.pop(h)
-            if h == "permafrost" and latitude < 55.:
-                if yes_or_no("Just to double-check - you consider permafrost loss a concern, but your building doesn't seem to be that far north (a latitude of "+str(latitude)+").  Are you sure you want to include permafrost in this assessment\n") is False:
-                    print("OK, thanks for clarifying - I won't consider it further.")
-                    hazard_dict.pop(h)
-            '''        
-print(screen_clear)
-
-# %%
-# And allow for 'other' entries
-print(screen_clear)
-token=[]
-print("Any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
-while True:
-    token=input("->")
-    if token != "done":
-        hazard_dict.update({token:master_hazard_dict["other"]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.
-
-        print("\n     Thanks. I also need to know what components are vulnerable to "+token.upper()+"\n")
-        if do_vulnerability_ranking:
-            print("     At the same time, I will also ask you to subjectively rank these vulnerabilities.\n")
-            print("\n         Please use the following qualitative scale for those questions:\n")
-            print("              <1----------------------------------------------------------------10>")
-            print("          not very concerned                                           extremely concerned\n")   
-
-        for component in building_component_dict:
-            per_component_hazard_dict = {} #initialize an empty list, to be populated with per-component hazards
-            if yes_or_no("     Are you concerned that "+h+" could impact your " + component.upper()+" now or in the future?") is True:
-                # add a new component-specific hazard to list. Leave value empty for now - will fill in subsequent loop.
-                per_component_hazard_dict[h] = np.nan #set vulnerability ranking to nan here as placeholder.
-            if do_vulnerability_ranking:
-                if per_component_hazard_dict != []:
-                    #print("You've identified a number of hazards that could impact your building's "+component+".\n")
-                    for pc_hazard, tmp in per_component_hazard_dict.items():
-                        while True:
-                            rankval = input("     How concerned? (1-10):")
-                            if rankval.isnumeric():
-                                rankval = int(rankval)
-                                if 1 <= rankval <= 10:
-                                    # set dictionary value for hazard, to non-nan rankval value.
-                                    per_component_hazard_dict[pc_hazard] = int(rankval)
-                                    break
-                                else:
-                                    print("     Whoops - please enter a number from 1-10")
-                            else:
-                                print("     Whoops - please enter a number from 1-10")
-                print("\n")
-            building_component_dict[component]["hazards"] = per_component_hazard_dict
-        print("Any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
+            hazard_dict[h]=master_hazard_dict[h]
+            building_component_dict=update_componentwise_hazard_list(h,building_component_dict,do_vulnerability_ranking)
     else:
-        break
+        print("Are there any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
+        while True:
+            token=input("->")
+            if token != "done":
+                hazard_dict.update({token:master_hazard_dict[h]})  #Get user-inputted hazard and assign default 'other' hazard information to new, user-defined hazard.  
+                building_component_dict=update_componentwise_hazard_list(token,building_component_dict,do_vulnerability_ranking)    
+            else:
+                break
+print(screen_clear)
 
 # %% 
 
