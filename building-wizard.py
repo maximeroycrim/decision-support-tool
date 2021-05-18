@@ -283,7 +283,7 @@ def update_componentwise_hazard_list(h,building_component_dict,do_vulnerability_
 
 for h in master_hazard_dict.keys():
     if h != "other":
-        #print(screen_clear)
+        print(screen_clear)
         #draw_stuff(h)
         print(h.upper())
         print("---------------------------------------------------------------------------")
@@ -294,7 +294,10 @@ for h in master_hazard_dict.keys():
             hazard_dict[h]=master_hazard_dict[h]
             building_component_dict=update_componentwise_hazard_list(h,building_component_dict,do_vulnerability_ranking)
     else:
-        print("Are there any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
+        print(screen_clear)
+        print("ANYTHING I FORGOT?")
+        print("---------------------------------------------------------------------------")
+        print("\nAre there any other weather hazards you want to tell me about before we continue?  Please enter these hazards below (or type 'done' if you are done)")
         while True:
             token=input("->")
             if token != "done":
