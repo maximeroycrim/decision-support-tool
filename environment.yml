@@ -1,7 +1,6 @@
 name: decision-support-tool
 channels:
-  - conda-forge
-  - trentonoliphant 
+  - conda-forge 
 dependencies:
   - panel
   - param
@@ -14,5 +13,6 @@ dependencies:
   - pyproj
   - pandas
   - numpy
-  - datetime
   - jupyter-panel-proxy
+  - pip:
+    - datetime
