@@ -4,19 +4,19 @@
     "resources":{
         "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping":{
             "source":"The National Research Council",
-            "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
+            "url":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
             "description":"provides a comprehensive overview of methods to integrate climate change into flood planning.",
             "type":"guidance"
         },
         "Canadian extreme coastal water levels":{
             "source":"Canadian Extreme Water Level Adaptation Tool",
-            "URL":"https://www.bio.gc.ca/science/data-donnees/can-ewlat/index-en.php",
+            "url":"https://www.bio.gc.ca/science/data-donnees/can-ewlat/index-en.php",
             "description":"provides estimates future extreme water levels for a range of Canadian coastal locations.",
             "type":"tool"
         },        
         "Relative sea level change":{
             "source":"ClimateData.ca",
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"sea_level",
             "group":"other",
             "season":"ann",
@@ -36,19 +36,19 @@
     "resources":{
         "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping":{
             "source":"The National Research Council",
-            "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
+            "url":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
             "description":"provides a comprehensive overview of methods to integrate climate change into flood planning.",
             "type":"guidance"
         },
         "PAVICS cloud-based hydrologic model":{
             "source":"Power Analytics and Visualization for Climate Science",
-            "URL":"https://pavics.ouranos.ca/hydrology.html",
+            "url":"https://pavics.ouranos.ca/hydrology.html",
             "description":"provides an advanced tool for estimating changes to streamflow due to climate change.",
             "type":"tool"
         },        
         "Maximum annual 1-day rain":{
             "source":"ClimateData.ca", 
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"rx1day",
             "units":"millimeters",
             "group":"precipitation",
@@ -58,7 +58,7 @@
         },
         "Change in 1-in-50 year snow load":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
             "var":"SLs",
             "units": "%",
             "description":"describes changes in extreme snow loads, based on levels of global warming.",
@@ -77,13 +77,13 @@
     "resources":{
         "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping":{
             "source":"The National Research Council",
-            "URL":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
+            "url":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
             "description":"provides a comprehensive overview of methods to integrate climate change into flood planning.",
             "type":"guidance"
         },
         "Maximum annual 1-day rain":{
             "source":"ClimateData.ca", 
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"rx1day",
             "units":"millimeters",
             "group":"precipitation",
@@ -93,7 +93,7 @@
         },
         "Maximum annual 5-day rain":{
             "source":"ClimateData.ca", 
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"rx5day",
             "units":"millimeters",
             "group":"precipitation",
@@ -103,7 +103,7 @@
         },        
         "Change in 1-in-50 year annual 15 minute and 1-day rain":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#4.2-one_day_rain_and_15_min_rain",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#4.2-one_day_rain_and_15_min_rain",
             "var":"Rn15m and Rn1Day",
             "units": "%",
             "description":"describes changes to the likelihood of rare short term and daily rain events.",
@@ -122,7 +122,7 @@
     "resources":{
         "Maximum annual 1-day rain":{
             "source":"ClimateData.ca", 
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"rx1day",
             "units":"millimeters",
             "group":"precipitation",
@@ -132,7 +132,7 @@
         },
         "Maximum annual 5-day rain":{
             "source":"ClimateData.ca", 
-            "URL":"https://climatedata.ca/explore/variable/?coords=",
+            "url":"https://climatedata.ca/explore/variable/?coords=",
             "var":"rx5day",
             "units":"millimeters",
             "group":"precipitation",
@@ -142,7 +142,7 @@
         },        
         "Change in 1-in-50 year annual 15 minute and 1-day rain":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#4.2-one_day_rain_and_15_min_rain",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#4.2-one_day_rain_and_15_min_rain",
             "var":"Rn15m and Rn1Day",
             "units": "%",
             "description":"describes changes to the likelihood of rare short term and daily rain events.",
@@ -161,7 +161,7 @@
     "resources":{
         "Change in 1-in-50 year snow load":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#6.1-snow_loads",
             "var":"SLs",
             "units": "%",
             "description":"describes changes in extreme snow loads, based on levels of global warming.",
@@ -180,7 +180,7 @@
     "resources":{
         "Cooling degree days":{
            "source":"ClimateData.ca",
-           "URL":"https://climatedata.ca/explore/variable/?coords=",
+           "url":"https://climatedata.ca/explore/variable/?coords=",
            "var":"cddcold_18",
            "group":"other",
            "season":"ann",
@@ -190,7 +190,7 @@
         },
         "Change in July 2.5% wet and dry design temperatures":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",        
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#3.1-heating_degree_days_design_temperatures_and_minimum_and_maximum_daily_mean_temperature",      
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#3.1-heating_degree_days_design_temperatures_and_minimum_and_maximum_daily_mean_temperature",      
             "var":"TJuly and TwJuly",
             "units":"Degrees Celcius",
             "description":"describes changes in building-relevant changes to mid-summer extreme warm temperatures.",
@@ -208,7 +208,7 @@
     "resources":{
         "Heating degree days":{
            "source":"ClimateData.ca",
-           "URL":"https://climatedata.ca/explore/variable/?coords=",
+           "url":"https://climatedata.ca/explore/variable/?coords=",
            "var":"hddheat_18",
            "group":"other",
            "season":"ann",
@@ -218,7 +218,7 @@
         },
         "Change in January 1% and 2.5% design temperatures":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",        
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#3.1-heating_degree_days_design_temperatures_and_minimum_and_maximum_daily_mean_temperature",      
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#3.1-heating_degree_days_design_temperatures_and_minimum_and_maximum_daily_mean_temperature",      
             "var":"TJan10 and TJan25",
             "units":"Degrees Celcius",
             "description":"describes changes in building-relevant changes to mid-winter extreme cold temperatures.",
@@ -237,7 +237,7 @@
     "resources":{
         "Change in permafrost extent":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#6.3-permafrost",
             "units":"%",
             "description":"describes changes to Canada's national permafrost extent in terms of percentages and large-scale spatial maps.",
             "type":"data",
@@ -245,7 +245,7 @@
         },
         "Infrastructure in permafrost: a guidelines for climate change adaptation":{
             "source":"CSA Plus",
-            "URL":"https://www.csagroup.org/store/product/2703076/",
+            "url":"https://www.csagroup.org/store/product/2703076/",
             "description":"provides guidance for adapting northern infrastructure including buildings to permafrost loss resulting from climate change.",
             "type":"guidance"
         }
@@ -260,7 +260,7 @@
     "resources":{
             "Change in 1-in-10 and 1-in-50 year wind pressures":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
             "units":"%",
             "description":"describes changes to building-relevant extreme high wind pressures, resulting from high wind speeds.",
             "type":"data",
@@ -268,7 +268,7 @@
         },
         "Change in 1-in-5 year driving rain wind pressures":{
             "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "URL":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
+            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#7.3-wind_pressures",
             "units":"%",
             "description":"describes changes to building-relevant extreme high wind pressures, resulting from high wind speeds combined with rain.",
             "type":"data",
@@ -285,7 +285,7 @@
     "resources":{
         "Fire weather index (FWI)":{
             "source":"ClimateData.ca",
-            "URL":"climatedata.ca/wildfire",
+            "url":"climatedata.ca/wildfire",
             "var":"FWI",
             "units":"FWI",
             "group":"other",
@@ -295,7 +295,7 @@
         },
         "Average maximum summer temperature":{
             "source":"ClimateData.ca",
-            "URL":"https://climatedata.ca/explore/variable/?",
+            "url":"https://climatedata.ca/explore/variable/?",
             "var":"tx_mean",
             "group":"temperature",
             "season":"summer",
