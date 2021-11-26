@@ -8,19 +8,19 @@
    "shell":{
       "sentence_start":"a",
       "description":"Includes superstructure, exterior closures, and roofing",
-      "group":["superstructure (floor and roof)","exterior closures (exterior wall, windows, doors)","roofing (coverings and openings"],
+      "group":["superstructure","exterior closures","roofing"],
       "possible_hazards":[]
       },
    "interiors":{
       "sentence_start":"a",
       "description":"Includes doors, partitions, staircases and wall finishes",
-      "group":["Doors and partitions","staircases","interior finishes (wall, floor and ceiling finishes)"],
+      "group":["doors","staircases","interior finishing"],
       "possible_hazards":[]
       },
    "services":{
       "sentence_start":"a",
       "description":"Includes elevators, plumbing, HVAC, fire protection, and electrical",
-      "group":["conveying systems (e.g. elevators)","Plumbing (water supply, sewage, drainage, etc.)","Mechnical heating systems","Mechanical cooling systems","Additional/specialized HVAC systems","Fire protection (includes sprinklers and hoses)","Electrical (includes service and distribution, lighting and communications."],
+      "group":["conveying systems","plumbing","heating systems","cooling systems","ventilation","fire protection","electrical"],
       "possible_hazards":[]
       }
 }

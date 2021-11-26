@@ -1,6 +1,6 @@
 {
 
-"marine coastal flooding":{
+"coastal flooding":{
     "resources":{
         "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping":{
             "source":"The National Research Council",
@@ -32,7 +32,7 @@
     "notes":"Remember, sea level rise will most likely impact your building through it's role in increasing the severity and frequency of storm and tide-driven extreme coastal flooding events."
 },
 
-"river and lake spring flooding":{
+"river and lake flooding":{
     "resources":{
         "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping":{
             "source":"The National Research Council",
