@@ -17,7 +17,7 @@
         "Relative sea level change":{
             "source":"ClimateData.ca",
             "url":"https://climatedata.ca/explore/variable/?coords=",
-            "var":"sea_level",
+            "var":"slr",
             "group":"other",
             "season":"ann",
             "units": "metres",

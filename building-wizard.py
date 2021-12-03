@@ -9,7 +9,6 @@ from sklearn.neighbors import BallTree
 import pandas as pd
 from collections import Counter
 
-
 dT_levels=['+0.5C','+1.0C','+1.5C','+2.0C','+2.5C','+3.0C','+3.5C']
 
 CRBCPI_data={dT_levels[0]:pd.read_excel("https://climate-scenarios.canada.ca/files/buildings_report/Appendix_1.2_NBCC/Appendix1.2_+0.5C_NBCC.xls"),
