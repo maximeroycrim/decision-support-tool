@@ -120,40 +120,17 @@
 
 "ice jam flooding":{
     "resources":{
-        "Maximum annual 1-day rain":{
-            "source":"ClimateData.ca", 
-            "url":"https://climatedata.ca/explore/variable/?coords=",
-            "var":"rx1day",
-            "units":"millimeters",
-            "group":"precipitation",
-            "season":"ann",
-            "description":"describes maximum annual daily rainfall.",
-            "type":"data"
-        },
-        "Maximum annual 5-day rain":{
-            "source":"ClimateData.ca", 
-            "url":"https://climatedata.ca/explore/variable/?coords=",
-            "var":"rx5day",
-            "units":"millimeters",
-            "group":"precipitation",
-            "season":"ann",
-            "description":"describes maximum annual 5-day rainfall.",
-            "type":"data"
-        },        
-        "Change in 1-in-50 year annual 15 minute and 1-day rain":{
-            "source":"The Climate Resilient Buildings and Core Public Infrastructure Project",
-            "url":"https://climate-scenarios.canada.ca/?page=buildings-report#4.2-one_day_rain_and_15_min_rain",
-            "var":"Rn15m and Rn1Day",
-            "units": "%",
-            "description":"describes changes to the likelihood of rare short term and daily rain events.",
-            "type":"data",
-            "tier":"2" 
+        "Change in ice jam flooding":{
+            "source":"CGU HS Committee on River Ice Processes and the Environment", 
+            "url":"http://www.cripe.ca/docs/proceedings/20/Turcotte-et-al-2019.pdf",
+            "description":"describes the potential mechanisms that ice jam flooding severity and frequency may be impacted by climate change.",
+            "type":"guidance"
         }
     },
-    "direction_statement": "Climate change is expected to cause extreme rain events to become more frequent and severe.",
-    "direction_confidence": "There is high confidence that as temperatures increase, the magnitude of extreme rainfall will also increase.",
-    "magnitude_confidence":"The exact magnitude of extreme rainfall increases may be somewhat uncertain, especially for high intensity, short duration rainfall events.",
-    "impact_statement":"Extreme rain can directly damage building components through leaks and infiltration, and also inundate building interiors, erode foundations and surrounding property, and decrease user accessibility from rain-caused overland or flooding.",
+    "direction_statement": "Climate change may cause ice jam flooding frequency and severity to change in different ways, for different reaches and rivers.",
+    "direction_confidence": "There is little confidence in the direction of change for broad-scale trends in ice jam flooding, which are driven by very local conditions.",
+    "magnitude_confidence":"The direction of changes for ice jam flooding may not be well known, if at all, at local scales.",
+    "impact_statement":"Ice jam flooding can cause extensive and dangerous flooding to buildings, along with potential for direct damage due to ice jam debris.",
     "notes":""
 },
 
