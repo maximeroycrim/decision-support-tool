@@ -6,15 +6,16 @@ dependencies:
   - param
   - bokeh
   - holoviews
+  - hvplot
   - geoviews
   - xarray
-  - hvplot
+  - geoviews
   - cartopy
   - pyproj
   - pandas
   - numpy
-  - jupyter-panel-proxy
-  - scikit-learn
   - matplotlib
+  - jupyter-panel-proxy
   - pip:
     - datetime
+    - scikit-learn
