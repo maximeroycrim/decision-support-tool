@@ -14,8 +14,7 @@ dependencies:
   - pandas
   - numpy
   - jupyter-panel-proxy
-  - sklearn
-  - json
+  - scikit-learn
   - matplotlib
   - pip:
     - datetime
