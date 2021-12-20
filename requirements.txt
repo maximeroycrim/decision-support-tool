@@ -1,4 +1,4 @@
-os
+Cython
 param
 bokeh
 holoviews
@@ -12,5 +12,4 @@ pandas
 numpy
 matplotlib
 datetime
-json
 sklearn
