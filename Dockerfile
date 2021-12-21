@@ -10,9 +10,6 @@ COPY . app
 
 WORKDIR /app
 
-# TODO : not necessary when changes will be merged
-RUN git checkout trials
-
 RUN conda create --name dst python=3.7
 
 RUN conda install --channel conda-forge cartopy
