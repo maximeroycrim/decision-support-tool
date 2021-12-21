@@ -44,6 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: 
-            - matprov/building-dst:latest
-            - matprov/building-dst:${{ steps.version.outputs.TAG_VERSION }}
+          tags: matprov/building-dst:${{ steps.version.outputs.TAG_VERSION }}
