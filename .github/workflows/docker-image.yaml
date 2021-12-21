@@ -1,16 +1,16 @@
 name: Docker Image CI
 
 on:
-  # push:
-  #   branches:
-  #     - "!*"
-  #   tags:
-  #     - "*"
-
   push:
     branches:
-      - 'master'
-      - 'trials'
+      - "!*"
+    tags:
+      - "*"
+
+  # push:
+  #   branches:
+  #     - 'master'
+  #     - 'trials'
   
 jobs:
   
