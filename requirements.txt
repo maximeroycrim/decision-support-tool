@@ -1,4 +1,5 @@
 Cython
+xlrd
 param
 bokeh
 holoviews
@@ -13,3 +14,4 @@ numpy
 matplotlib
 datetime
 sklearn
+jupyterlab
