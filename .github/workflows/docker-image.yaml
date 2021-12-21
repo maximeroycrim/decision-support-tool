@@ -8,7 +8,7 @@ on:
 
 jobs:
   
-  docker:
+  docker-build-push:
   
     runs-on: ubuntu-latest
     
