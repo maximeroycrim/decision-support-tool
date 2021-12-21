@@ -1,0 +1,25 @@
+repos:
+- repo: https://github.com/sirosen/check-jsonschema
+  rev: 0.8.2
+  hooks:
+    - id: check-jsonschema
+      name: "Validate JSON files against JSON Schemas"
+      files: building_inputs/master_general_resources_database.json
+      types: [json]
+      args: ["--schemafile", "json_schemas/master_general_resources_database.json"]
+- repo: https://github.com/psf/black
+  rev: 21.12b0
+  hooks:
+    - id: black-jupyter
+      name: "Lint Jupyter notebooks using Black"
+      files: decision-support-tool.ipynb
+# -   repo: https://github.com/pre-commit/pre-commit-hooks
+#     rev: v2.3.0
+#     hooks:
+#     -   id: check-yaml
+#     -   id: end-of-file-fixer
+#     -   id: trailing-whitespace
+# -   repo: https://github.com/psf/black
+#     rev: 21.5b1
+#     hooks:
+#     -   id: black
