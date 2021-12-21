@@ -3,9 +3,15 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - 'master'
-      - 'trials'
+      - "!*"
+    tags:
+      - "*"
 
+  # push:
+  #   branches:
+  #     - 'master'
+  #     - 'trials'
+  
 jobs:
   
   docker-build-push:
