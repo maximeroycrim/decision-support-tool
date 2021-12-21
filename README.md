@@ -1,18 +1,20 @@
 # Decision Support Tool
 
 
-1. install pre-commit
+1. Install pre-commit
 
     pip install pre-commit
     pre-commit install
 
-2. commit changes
+2. Commit changes
 
     git commit -m "changed something in the notebook"
-    (runs pre-commit checks)
+    
+    Runs pre-commit checks locally.
 
-3. tag version
+3. Tag version
 
     git tag <tag_name>
     git push origin <tag_name>
-    (triggers a GitHub Action which builds and push Docker image)
+
+    Triggers a GitHub Action which builds and push Docker image.
