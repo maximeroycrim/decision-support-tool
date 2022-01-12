@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5006
 
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "dst", "panel", "serve", "decision-support-tool.ipynb", "--session-token-expiration", "86400"]
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "dst", "panel", "serve", "decision-support-tool.ipynb", "--session-token-expiration", "86400", "--prefix", "building-dst", "--use-xheaders", "--log-level=debug"]
