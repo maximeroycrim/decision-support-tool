@@ -17,4 +17,4 @@ repos:
   rev: v1.11.0  # CURRENT_TAG/COMMIT_HASH
   hooks:
     - id: jupytext
-      args: [--from, "decision-support-tool.ipynb", --to, "py"]
+      args: [--from, ipynb, --to, "py"]
