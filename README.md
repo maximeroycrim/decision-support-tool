@@ -8,15 +8,21 @@
     pre-commit install
     ```
 
-2. Commit changes
+2. Edit `CHANGELOG.md` accordingly
+
+3. Add changes to git staging env
+
+    ```
+    git add -A
+    ```
+
+3. Commit changes
 
     ```
     git commit -m "changed something in the notebook"
     ```
     
     Runs `pre-commit` checks locally.
-
-3. Edit `CHANGELOG.md` accordingly
 
 4. Tag version
 
