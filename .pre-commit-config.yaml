@@ -13,3 +13,8 @@ repos:
     - id: black-jupyter
       name: "Lint Jupyter notebooks using Black"
       files: decision-support-tool.ipynb
+- repo: https://github.com/mwouts/jupytext
+  rev: v1.11.0  # CURRENT_TAG/COMMIT_HASH
+  hooks:
+    - id: jupytext
+      args: [--from, "decision-support-tool.ipynb", --to, "py"]
