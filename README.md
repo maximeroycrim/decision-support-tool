@@ -1,22 +1,24 @@
 # Decision Support Tool
 
 
-1. Install `pre-commit`
+1. Install `pre-commit` tool to simplify commit review tasks
 
     ```
     pip install pre-commit
     pre-commit install
     ```
 
-2. Edit `CHANGELOG.md` accordingly
+2. In JupyterHub, edit the `decision-support-tool.ipynb`file as you wish
 
-3. Add changes to git staging env
+3. Edit `CHANGELOG.md` accordingly to indicate what you've changed
+
+4. Add changes to git staging env
 
     ```
     git add -A
     ```
 
-3. Commit changes
+5. Commit changes
 
     ```
     git commit -m "changed something in the notebook"
@@ -24,11 +26,23 @@
     
     Runs `pre-commit` checks locally.
 
-4. Tag version
+6. Tag version
 
     ```
     git tag <tag_name>
     git push origin <tag_name>
     ```
 
-    Triggers a GitHub Action which builds and push Docker image.
+    This will trigger a GitHub Action which builds and push Docker image to https://hub.docker.com/r/matprov/building-dst.
+
+7. Verify that the container image is at https://hub.docker.com/r/matprov/building-dst/tags
+
+8. Test the image locally
+
+    ```
+    docker run -p 5006:5006 -e BOKEH_ALLOW_WS_ORIGIN=127.0.0.1:5006 matprov/building-dst:YOUR_VERSION_TAG
+    ```
+
+    In your browser, go to http://127.0.0.1:5006/building-dst/decision-support-tool
+
+9. If the app works as you want, this container version is ready to be deployed in the staging stack
