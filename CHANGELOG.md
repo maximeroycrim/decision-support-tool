@@ -2,6 +2,10 @@ Unreleased (latest)
 
 * 
 
+0.1.6 - Released 18-01-2022
+
+* Improved Dockerfile build time
+
 0.1.5 - Released 13-01-2022
 
 * Expose app under "/building-dst"
