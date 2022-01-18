@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /
 
-COPY . app
+COPY ./requirements.txt app/
 
 WORKDIR /app
 
@@ -15,6 +15,12 @@ RUN conda create --name dst python=3.7
 RUN conda install --channel conda-forge cartopy
 
 RUN pip install -r requirements.txt
+
+WORKDIR /
+
+COPY . app
+
+WORKDIR /app
 
 EXPOSE 5006
 
