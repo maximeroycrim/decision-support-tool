@@ -8,6 +8,8 @@
     pre-commit install
     ```
 
+    To run `pre-commit` without making a commit, run `pre-commit run --all-files`.
+
 2. In JupyterHub, edit the `decision-support-tool.ipynb`file as you wish
 
 3. Edit `CHANGELOG.md` accordingly to indicate what you've changed
