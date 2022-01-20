@@ -18,4 +18,5 @@ dependencies:
   - jupyter-panel-proxy
   - pip:
     - datetime
+    - xlrd
     - scikit-learn
