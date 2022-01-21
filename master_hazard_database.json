@@ -316,16 +316,6 @@
         "contaminated_sites":"Wildfire can damage site infrastructure and increase airborne and aqueous contaminant mobilization."
     },
     "notes":""    
-},
-
-"other":{
-    "resources":"",
-    "direction_statement":"",
-    "direction_confidence": "",
-    "magnitude_confidence":"",
-    "impact_statement":"",
-    "type":"",
-    "notes":""
 }
 
 }
