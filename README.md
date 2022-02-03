@@ -41,6 +41,14 @@
 
 8. Test the image locally
 
+    To build the container:
+
+    ```
+    docker build -t matprov/building-dst:YOUR_VERSION_TAG .
+    ```
+
+    To run the container:
+
     ```
     docker run -p 5006:5006 -e BOKEH_ALLOW_WS_ORIGIN=127.0.0.1:5006 matprov/building-dst:YOUR_VERSION_TAG
     ```

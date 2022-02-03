@@ -1,6 +1,10 @@
 Unreleased (latest)
 
-* 
+*
+
+0.1.7 - Released 03-02-2022
+
+* Merged against the origin branch
 
 0.1.6 - Released 18-01-2022
 
