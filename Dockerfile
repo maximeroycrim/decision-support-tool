@@ -1,6 +1,6 @@
 FROM continuumio/miniconda3
 
-# The enviroment variable ensures that the python output is set straight
+# The environment variable ensures that the python output is set straight
 # to the terminal without buffering it first
 ENV PYTHONUNBUFFERED 1
 
