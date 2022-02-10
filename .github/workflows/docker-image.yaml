@@ -44,4 +44,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: matprov/building-dst:${{ steps.version.outputs.TAG_VERSION }}
+          tags: crimca/decision-support-tool:${{ steps.version.outputs.TAG_VERSION }}

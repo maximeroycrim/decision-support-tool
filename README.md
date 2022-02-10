@@ -35,16 +35,16 @@
     git push origin <tag_name>
     ```
 
-    This will trigger a GitHub Action which builds and push Docker image to https://hub.docker.com/r/matprov/building-dst.
+    This will trigger a GitHub Action which builds and push Docker image to https://hub.docker.com/r/crimca/decision-support-tool.
 
-7. Verify that the container image is at https://hub.docker.com/r/matprov/building-dst/tags
+7. Verify that the container image is at https://hub.docker.com/r/crimca/decision-support-tool/tags
 
 8. Test the image locally
 
     ## To build the container locally:
 
     ```
-    docker build -t matprov/building-dst:YOUR_VERSION_TAG .
+    docker build -t crimca/decision-support-tool:YOUR_VERSION_TAG .
     ```
 
     Note that this local container tag will be retrieved instead of the remote image.<br>
@@ -53,7 +53,7 @@
     ## To run the container:
 
     ```
-    docker run -p 5006:5006 -e BOKEH_ALLOW_WS_ORIGIN=127.0.0.1:5006 matprov/building-dst:YOUR_VERSION_TAG
+    docker run -p 5006:5006 -e BOKEH_ALLOW_WS_ORIGIN=127.0.0.1:5006 crimca/decision-support-tool:YOUR_VERSION_TAG
     ```
 
     In your browser, go to http://127.0.0.1:5006/building-dst/decision-support-tool
