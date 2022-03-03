@@ -1,0 +1,63 @@
+{
+    "metadata":{
+       "application":"DecisionSupportTool",
+       "name":"MasterHazardDatabase",
+       "description":"Model containing data for hazards",
+       "version":"0.1",
+       "modifiedTime":"2022-02-22T16:30:16-05:00",
+       "modifiedBy":"Maxime Roy",
+       "modifiedByEmail":"maxime.roy@crim.ca"
+    },
+    "hazards":[
+       {
+          "id":"coastalFlooding",
+          "name":"coastal flooding",
+          "resources":[
+             {
+               "id": 1,
+               "_id": "an_inventory_of_methods_for_estimating_climate_change_informed_design_water_levels_for_floodplain_mapping",
+               "name_eng": "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping",
+               "name": "An Inventory of Methods for Estimating Climate Change-Informed Design Water Levels for Floodplain Mapping",
+                "properties":{
+                   "source":"The National Research Council",
+                   "url":"https://nrc-publications.canada.ca/eng/view/ft/?id=d72127b3-f93b-48fb-ad82-8eb09992b6b8",
+                   "description":"provides a comprehensive overview of methods to integrate climate change into flood planning.",
+                   "type":"guidance"
+                }
+             },
+             {
+                "id": 2,
+                "name": "Canadian extreme coastal water levels",
+                "properties":{
+                   "source":"Canadian Extreme Water Level Adaptation Tool",
+                   "url":"https://www.bio.gc.ca/science/data-donnees/can-ewlat/index-en.php",
+                   "description":"provides estimates future extreme water levels for a range of Canadian coastal locations.",
+                   "type":"tool"
+                }
+             },
+             {
+                "id": 3,
+                "name": "Relative sea level change",
+                "properties": {
+                   "source":"ClimateData.ca",
+                   "url":"https://climatedata.ca/explore/variable/?coords=",
+                   "var":"slr",
+                   "group":"other",
+                   "season":"ann",
+                   "units":"metres",
+                   "description":"describes relative change in sea level around Canada's coasts.",
+                   "type":"data"
+                }
+             }
+          ],
+          "directionStatement":"Relative sea level is expected to rise along many Canadian coastlines.  However, particularly in the North, sea level may actually fall because of ongoing natural land uplift.",
+          "directionConfidence":"There is reasonably high confidence in the direction of projected sea level changes around Canada's coastlines.",
+          "magnitudeConfidence":"There is less confidence in the exact magnitude of changes to sea level at specific locations.",
+          "impactStatement":{
+             "building":"Via coastal flood events, sea level rise can indundate building interiors, erode foundations and surrounding property, and decrease user accessibility.",
+             "contaminatedSites":"Via coastal flood events, sea level rise can increase contaminant mobilization, grow, receptor pathways, and damage site infrastructure."
+          },
+          "notes":"Remember, sea level rise will most likely impact your building through it's role in increasing the severity and frequency of storm and tide-driven extreme coastal flooding events."
+       }
+    ]
+ }
